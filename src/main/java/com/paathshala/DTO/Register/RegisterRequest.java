@@ -9,23 +9,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class RegisterRequest {
+public class RegisterRequest extends BadUserRequest{
 
- @NotBlank(message = "Username required")
-private String username;
 
  @NotBlank(message = "Password required")
  @Size(min=5 ,message="Password must be at least 5 characters")
 private String password;
 
- @Email(message = "Valid email format required")
- @NotBlank(message = "Email required")
- private String email;
+ public RegisterRequest(String username,String password,String email,Role role)
+ {
+  super(username, email, role);
+  this.password = password;
+ }
 
- private Role role;
+
 
 }
