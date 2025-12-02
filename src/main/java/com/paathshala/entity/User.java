@@ -44,9 +44,6 @@ public abstract class User{
     protected void setPassword(String password){ this.password = password;}
     protected void setRole(Role role){ this.role = role;}
 
-
-    protected String getPassword(){return password;}
-
     //domain method
     public void changePassword(String password){setPassword(password);}
 

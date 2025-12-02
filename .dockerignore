@@ -1,0 +1,30 @@
+# Build outputs
+target/
+build/
+out/
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Git
+.git/
+.gitignore
+
+# Maven wrapper
+.mvn/
+mvnw
+mvnw.cmd
+
+# OS/System files
+.DS_Store
+Thumbs.db
+
+# Test logs or local data (optional)
+*.log
+*.zip
+*.tar.gz
+*.db
