@@ -1,5 +1,6 @@
 package com.paathshala.DTO.Register;
 
+import com.paathshala.entity.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -23,5 +24,7 @@ private String password;
 
  @Email(message = "Valid email format requiresd")
  private String email;
+
+ private Role role;
 
 }

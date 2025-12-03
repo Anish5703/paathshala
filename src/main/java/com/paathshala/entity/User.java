@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class User{
+public class User{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
