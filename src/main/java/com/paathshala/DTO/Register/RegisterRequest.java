@@ -1,6 +1,6 @@
 package com.paathshala.DTO.Register;
 
-import com.paathshala.entity.Role;
+import com.paathshala.model.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

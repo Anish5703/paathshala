@@ -1,6 +1,6 @@
 package com.paathshala.DTO.Login;
 
-import com.paathshala.entity.Role;
+import com.paathshala.model.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

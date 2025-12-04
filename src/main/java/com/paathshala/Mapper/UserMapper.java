@@ -5,8 +5,7 @@ import com.paathshala.DTO.Login.LoginRequest;
 import com.paathshala.DTO.Login.LoginResponse;
 import com.paathshala.DTO.Register.RegisterRequest;
 import com.paathshala.DTO.Register.RegisterResponse;
-import com.paathshala.entity.Role;
-import com.paathshala.entity.User;
+import com.paathshala.model.User;
 
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package com.paathshala.entity;
+package com.paathshala.model;
 
 
 import jakarta.persistence.*;

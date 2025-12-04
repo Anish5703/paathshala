@@ -1,6 +1,6 @@
 package com.paathshala.DTO.Register;
 
-import com.paathshala.entity.Role;
+import com.paathshala.model.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

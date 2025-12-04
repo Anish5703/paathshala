@@ -1,12 +1,13 @@
 package com.paathshala.entity;
 
+import com.paathshala.model.Role;
+import com.paathshala.model.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "student_tbl")
-public class Student extends User{
+public class Student extends User {
 
   private boolean isActive;
 
