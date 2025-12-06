@@ -3,9 +3,10 @@ package com.paathshala.repository;
 import com.paathshala.entity.Admin;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AdminRepo extends JpaRepository {
+import java.util.Optional;
 
-    Admin findByEmail(String email);
-    Admin findByUsername(String username);
-    Admin save(Admin admin);
+public interface AdminRepo extends JpaRepository<Admin,Integer>{
+
+    Optional<Admin> findByEmail(String email);
+    Optional<Admin> findByUsername(String username);
 }

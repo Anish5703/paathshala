@@ -104,7 +104,7 @@ public class AuthService {
         User user = UserMapper.toEntity(req) ;
         Map<String, Object> map = new HashMap<>();
         try{
-            User newUser =  new Student();
+            User newUser =  null;
             if(req.getRole().equals(Role.STUDENT)) {
                 Student student = (Student) user;
                 student.setPassword(encoder.encode(student.getPassword()));
