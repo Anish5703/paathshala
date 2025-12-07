@@ -1,7 +1,6 @@
 package com.paathshala.entity;
 
 import com.paathshala.model.Role;
-import com.paathshala.model.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
@@ -15,6 +14,11 @@ public class Student extends User {
     public Student(String username, String email , String password, Role role)
   {
       super(username, email, password, role);
+      isActive = false;
+  }
+  public Student()
+  {
+      super();
       isActive = false;
   }
 

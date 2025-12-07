@@ -1,5 +1,6 @@
 package com.paathshala.model;
 
+import com.paathshala.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 

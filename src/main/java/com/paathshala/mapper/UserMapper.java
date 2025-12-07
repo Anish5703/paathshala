@@ -1,17 +1,21 @@
-package com.paathshala.Mapper;
+package com.paathshala.mapper;
 
 
 import com.paathshala.DTO.Login.LoginRequest;
 import com.paathshala.DTO.Login.LoginResponse;
 import com.paathshala.DTO.Register.RegisterRequest;
 import com.paathshala.DTO.Register.RegisterResponse;
-import com.paathshala.model.User;
+import com.paathshala.entity.Admin;
+import com.paathshala.entity.Student;
+import com.paathshala.model.Role;
+import com.paathshala.entity.User;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 //Mapper between Entity and DTOs
 
-
+@Component
 public class UserMapper {
 
     /**
@@ -19,14 +23,24 @@ public class UserMapper {
      * @param req the registration request DTO containing user input
      * @return a {@link User} entity
      */
-    public static User toEntity(RegisterRequest req)
+    public static User toEntity(RegisterRequest req) throws IllegalArgumentException
     {
-        return new User(
+        if(req.getRole()== Role.STUDENT)
+        return new Student(
                 req.getUsername(),
                 req.getEmail(),
                 req.getPassword(),
                 req.getRole()
         );
+        else if (req.getRole()==Role.ADMIN)
+            return new Admin(
+                    req.getUsername(),
+                    req.getEmail(),
+                    req.getPassword(),
+                    req.getRole()
+            );
+
+        else throw new IllegalArgumentException("User Role not Supported : Role."+req.getRole());
     }
 
    //User Entity to LoginResponse DTO

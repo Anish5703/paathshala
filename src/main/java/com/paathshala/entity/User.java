@@ -1,6 +1,7 @@
-package com.paathshala.model;
+package com.paathshala.entity;
 
 
+import com.paathshala.model.Role;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -8,10 +9,12 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
-@MappedSuperclass
+@Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User{
+@Entity
+@Table(name="user_tbl")
+public abstract class User{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
