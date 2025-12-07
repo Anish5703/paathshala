@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-//Mapper between Entity and DTOs
-
 @Component
 public class UserMapper {
 

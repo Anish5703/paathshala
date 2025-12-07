@@ -29,6 +29,8 @@ public abstract class User{
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private boolean isActive;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
@@ -40,12 +42,15 @@ public abstract class User{
         this.email = email;
         this.password = password;
         this.role = role;
+        this.isActive = false;
     }
 
     protected void setUsername(String username){ this.username = username;}
     protected void setEmail(String email){ this.email = email;}
     protected void setPassword(String password){ this.password = password;}
     protected void setRole(Role role){ this.role = role;}
+    public void setStatus(boolean status) {isActive = status;}
+    public boolean getStatus(){return isActive;}
 
     //domain method
     public void changePassword(String password){setPassword(password);}

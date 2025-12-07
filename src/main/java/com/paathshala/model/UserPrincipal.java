@@ -1,5 +1,6 @@
 package com.paathshala.model;
 
+import com.paathshala.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,9 +10,9 @@ import java.util.Collections;
 
 public class UserPrincipal implements UserDetails {
 
-    private Users user;
+    private User user;
 
-    public UserPrincipal(Users user)
+    public UserPrincipal(User user)
     {
         this.user = user;
     }

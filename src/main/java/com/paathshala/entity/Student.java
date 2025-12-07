@@ -8,20 +8,15 @@ import jakarta.persistence.Table;
 @Table(name = "student_tbl")
 public class Student extends User {
 
-  private boolean isActive;
-
 
     public Student(String username, String email , String password, Role role)
   {
       super(username, email, password, role);
-      isActive = false;
   }
   public Student()
   {
       super();
-      isActive = false;
   }
 
-  public void setStatus(boolean status) {isActive = status;}
-    public boolean getStatus(){return isActive;}
+
 }
