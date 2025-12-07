@@ -1,6 +1,6 @@
 package com.paathshala.security;
 
-
+import com.paathshala.service.OauthService;
 import com.paathshala.entity.User;
 import com.paathshala.repository.UserRepo;
 import com.paathshala.service.JwtService;
