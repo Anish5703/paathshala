@@ -7,4 +7,5 @@ public interface AdminRepo extends JpaRepository {
 
     Admin findByEmail(String email);
     Admin findByUsername(String username);
+    Admin save(Admin admin);
 }

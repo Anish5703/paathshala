@@ -22,9 +22,11 @@ private String username;
  @Size(min=5 ,message="Passowrd must be atleast 5 characters")
 private String password;
 
- @Email(message = "Valid email format requiresd")
+ @Email(message = "Valid email format required")
+ @NotBlank(message = "Email required")
  private String email;
 
+ @NotBlank(message = "Role required")
  private Role role;
 
 }

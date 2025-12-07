@@ -58,8 +58,8 @@ public class UserMapper {
     public static LoginResponse toLoginResponse(LoginRequest request,Map<String,Object> message,boolean error)
     {
         return new LoginResponse(
+                request.getUsername(),
                 null,
-                request.getEmail(),
                 null,
                 null,
                 message,

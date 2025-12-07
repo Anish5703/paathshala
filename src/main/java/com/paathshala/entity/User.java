@@ -6,11 +6,13 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Inheritance(strategy = InheritanceType.JOINED)
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name="user_tbl")
@@ -47,15 +49,9 @@ public abstract class User{
         this.isActive = false;
     }
 
-    protected void setUsername(String username){ this.username = username;}
-    protected void setEmail(String email){ this.email = email;}
-    protected void setPassword(String password){ this.password = password;}
-    protected void setRole(Role role){ this.role = role;}
+    //Domain Method
     public void setStatus(boolean status) {isActive = status;}
     public boolean getStatus(){return isActive;}
-
-    //domain method
-    public void changePassword(String password){setPassword(password);}
 
 
 }
