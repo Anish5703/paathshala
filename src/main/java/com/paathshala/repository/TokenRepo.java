@@ -1,4 +1,4 @@
-package com.paathshala.Repository;
+package com.paathshala.repository;
 
 import com.paathshala.model.Token;
 import com.paathshala.entity.User;

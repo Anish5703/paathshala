@@ -1,7 +1,6 @@
-package com.paathshala.Security;
+package com.paathshala.security;
 
-import com.example.ByaparLink.Service.JwtService;
-import com.example.ByaparLink.Service.MyUserDetailsService;
+
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;

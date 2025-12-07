@@ -1,7 +1,7 @@
-package com.paathshala.Security;
+package com.paathshala.security;
 
 
-import com.example.ByaparLink.Service.MyUserDetailsService;
+import com.paathshala.service.MyUserDetailsService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -59,14 +59,16 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider()
-    {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(bCryptPasswordEncoder());
-        provider.setUserDetailsService(userDetailsService);
-        return provider;
+    public AuthenticationProvider authenticationProvider() {
+        // Provide a custom UserDetailsService to load users from DB
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
 
+        // Use BCryptPasswordEncoder to hash/verify passwords
+        provider.setPasswordEncoder(bCryptPasswordEncoder());
+
+        return provider;
     }
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception
