@@ -4,16 +4,21 @@ package com.paathshala.service;
 import com.paathshala.DTO.Login.LoginResponse;
 import com.paathshala.DTO.Register.RegisterRequest;
 import com.paathshala.DTO.Register.RegisterResponse;
+import com.paathshala.entity.Admin;
+import com.paathshala.entity.Student;
 import com.paathshala.entity.User;
 import com.paathshala.mapper.UserMapper;
 import com.paathshala.model.Role;
+import com.paathshala.repository.AdminRepo;
+import com.paathshala.repository.StudentRepo;
 import com.paathshala.repository.UserRepo;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,36 +29,52 @@ public class OauthService {
     private UserRepo userRepo;
 
     @Autowired
+    private StudentRepo studentRepo;
+
+    @Autowired
+    private AdminRepo adminRepo;
+
+    @Autowired
     private JwtService jwtService;
+
+    private static final Logger logger = LoggerFactory.getLogger(OauthService.class);
 
 
 
 
 //Method to register user for first attempt of oauth login
-    public RegisterResponse registerUser(RegisterRequest registerRequest)
+    public RegisterResponse registerUser(RegisterRequest req)
     {
-        boolean usernameExists = isUsernameExists(registerRequest.getUsername());
+        boolean usernameExists = isUsernameExists(req.getUsername());
+        logger.info("Username exists : {}",usernameExists);
 
         if(usernameExists)
         {
             Map<String , Object > map = new HashMap<>(Map.of("username", "Username already exists", "status", "Registration Unsuccessfull"));
-            return new RegisterResponse(registerRequest.getUsername(), registerRequest.getEmail(), null, map, true);
+            return new RegisterResponse(req.getUsername(), req.getEmail(), null, map, true);
         }
         else
         {
             try {
-                User user = UserMapper.toEntity(registerRequest);
-                user.setRole(Role.STUDENT);
-                user.setActive(true);
-                User newUser = userRepo.save(user);
+                User user = UserMapper.toEntity(req);
+                user.setStatus(true);
+                User newUser = null;
+                if(req.getRole().equals(Role.STUDENT)) {
+                    Student student =(Student) user;
+                    newUser = studentRepo.save(student);
+                }
+                else if(req.getRole().equals(Role.ADMIN)) {
+                    Admin admin = (Admin) user;
+                    newUser = adminRepo.save(admin);
+                }
                 Map<String , Object > map = new HashMap<>(Map.of("status","Registration Successful"));
                 return UserMapper.toRegisterResponse(newUser, map, false);
             }
             catch(Exception e)
             {
-                System.out.println("Unable to save new user "+registerRequest.getUsername());
+                System.out.println("Unable to save new user "+req.getUsername());
                 Map<String , Object > map = new HashMap<>(Map.of("status","Registration Unsuccessfull","exception",e.getLocalizedMessage()));
-                return new RegisterResponse(registerRequest.getUsername(), registerRequest.getEmail(), null, map, true);
+                return new RegisterResponse(req.getUsername(), req.getEmail(), req.getRole(), map, true);
 
             }
         }

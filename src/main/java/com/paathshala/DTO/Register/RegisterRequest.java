@@ -26,7 +26,6 @@ private String password;
  @NotBlank(message = "Email required")
  private String email;
 
- @NotBlank(message = "Role required")
  private Role role;
 
 }

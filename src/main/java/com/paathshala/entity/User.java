@@ -33,7 +33,8 @@ public abstract class User{
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private boolean isActive;
+
+    private Boolean isActive;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -52,6 +53,12 @@ public abstract class User{
     //Domain Method
     public void setStatus(boolean status) {isActive = status;}
     public boolean getStatus(){return isActive;}
+
+    @PrePersist
+    public void prePresist()
+    {
+        if(isActive == null) isActive = false;
+    }
 
 
 }

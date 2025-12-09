@@ -7,6 +7,8 @@ import com.paathshala.service.JwtService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -28,8 +30,7 @@ public class CustomOauth2SuccessHandler implements AuthenticationSuccessHandler 
     @Autowired
     private UserRepo userRepo;
 
-
-
+    private static final Logger logger = LoggerFactory.getLogger(CustomOauth2SuccessHandler.class);
 
 
     @Override
@@ -41,14 +42,17 @@ public class CustomOauth2SuccessHandler implements AuthenticationSuccessHandler 
 
             //fetching email from google success authentication
             String email = oAuth2User.getAttribute("email");
+            logger.info("Fetched email from oauth : {}",email);
 
             boolean emailExists = oauthService.isEmailExists(email);
+            logger.info("Is email exists : "+emailExists);
             DefaultRedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
             //if email is empty redirecting to login page
-            if (email == null)
+            if (email==null || email.isEmpty())
             {
                 String url = "/api/auth/login";
+                logger.info("Redirecting to : {}",url);
                 redirectStrategy.sendRedirect(servletRequest, servletResponse, url);
                 return;
             }
@@ -58,6 +62,8 @@ public class CustomOauth2SuccessHandler implements AuthenticationSuccessHandler 
                 User user = userRepo.findByEmail(email);
                 oauthService.setJwtCookie(user.getUsername(),servletResponse,servletRequest);
                 String url = "/api/oauth/home";
+                logger.info("Redirecting to : {}",url);
+
                 redirectStrategy.sendRedirect(servletRequest, servletResponse, url);
                 return;
             }
@@ -66,6 +72,7 @@ public class CustomOauth2SuccessHandler implements AuthenticationSuccessHandler 
             {
                 oauthService.setEmailCookie(email,servletResponse,servletRequest);
                 String url = "/api/oauth/register";
+                logger.info("Redirecting to : {}",url);
                 redirectStrategy.sendRedirect(servletRequest, servletResponse, url);
                 return;
             }

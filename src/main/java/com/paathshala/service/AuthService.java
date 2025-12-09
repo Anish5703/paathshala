@@ -168,7 +168,7 @@ public class AuthService {
         if(token!=null)
         {
             User user = token.getUser();
-            user.setActive(true);
+            user.setStatus(true);
             userRepo.save(user);
             map.put("status","Registration Successful");
             return UserMapper.toRegisterResponse(token.getUser(),map,false);
@@ -220,7 +220,7 @@ public class AuthService {
                    map.put("status","Fill the registration form first");
                    return new RegisterResponse(null,email,null,map,true);
                }
-               else if(user.isActive())
+               else if(user.getStatus())
                {
                    map.put("status","Account already active");
                    return new RegisterResponse(user.getUsername(), user.getEmail(), user.getRole(),map,true);

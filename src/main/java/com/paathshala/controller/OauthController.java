@@ -84,8 +84,10 @@ public class OauthController {
                                     -> pass json with email and username -> Call (POST) "/api/oauth/register" -> set jwt cookie -> receive json with user info
                                     ->Call (GET) "/api/oath/home" -> receive json with jwt token and loginResponse
 
+     */
 
-
+    /*
+    /oauth2/authorization/google -> to get options of accounts to select
      */
 
 }
