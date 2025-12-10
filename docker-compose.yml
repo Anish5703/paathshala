@@ -24,7 +24,6 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@pgadmin4.com
       PGADMIN_DEFAULT_PASSWORD: admin
-      PGADMIN_CONFIG_CONSOLE_LOG_LEVEL: 50  # 40 = ERROR, 50 = CRITICAL
     ports:
       - "8082:80"   # pgAdmin accessible on localhost:8082
     depends_on:
