@@ -2,6 +2,7 @@ package com.paathshala.controller;
 
 
 import com.paathshala.DTO.Login.LoginResponse;
+import com.paathshala.DTO.Register.OauthRegisterRequest;
 import com.paathshala.DTO.Register.RegisterRequest;
 import com.paathshala.DTO.Register.RegisterResponse;
 import com.paathshala.model.Role;
@@ -41,10 +42,12 @@ public class OauthController {
 
     //Endpoint to register user for first time oauth login
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> registerOauth(@RequestBody RegisterRequest registerRequest,
+    public ResponseEntity<RegisterResponse> registerOauth(@RequestBody OauthRegisterRequest oauthRegisterRequest,
                                                           HttpServletResponse servletResponse,HttpServletRequest servletRequest)
     {
-        String password = KeyGenerators.string().generateKey();
+        RegisterRequest registerRequest = (RegisterRequest) oauthRegisterRequest;
+        String password = KeyGenerators.string().generateKey(); //generate a random password
+        registerRequest.setPassword(password);
         registerRequest.setPassword(password);
       RegisterResponse registerResponse = oauthService.registerUser(registerRequest);
       if(!registerResponse.isError())
