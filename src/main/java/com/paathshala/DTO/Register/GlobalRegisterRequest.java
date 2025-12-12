@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class BadUserRequest {
+public class GlobalRegisterRequest {
 
     @NotBlank(message = "Username required")
     private String username;

@@ -45,10 +45,10 @@ public class OauthController {
     public ResponseEntity<RegisterResponse> registerOauth(@RequestBody OauthRegisterRequest oauthRegisterRequest,
                                                           HttpServletResponse servletResponse,HttpServletRequest servletRequest)
     {
-        RegisterRequest registerRequest = (RegisterRequest) oauthRegisterRequest;
         String password = KeyGenerators.string().generateKey(); //generate a random password
-        registerRequest.setPassword(password);
-        registerRequest.setPassword(password);
+        RegisterRequest registerRequest = new RegisterRequest(
+               oauthRegisterRequest.getUsername(),password, oauthRegisterRequest.getEmail(), oauthRegisterRequest.getRole()
+        );
       RegisterResponse registerResponse = oauthService.registerUser(registerRequest);
       if(!registerResponse.isError())
       {

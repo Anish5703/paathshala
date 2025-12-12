@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class RegisterRequest extends BadUserRequest{
+public class RegisterRequest extends GlobalRegisterRequest{
 
 
  @NotBlank(message = "Password required")
