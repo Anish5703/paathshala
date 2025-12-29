@@ -4,6 +4,7 @@ package com.paathshala.service;
 import com.paathshala.entity.User;
 import com.paathshala.model.UserPrincipal;
 import com.paathshala.repository.UserRepo;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,7 +18,7 @@ public class MyUserDetailsService implements UserDetailsService {
     private UserRepo userRepo;
 
     @Override
-    public UserDetails loadUserByUsername(String username)
+    public UserDetails loadUserByUsername( String username)
     {
         User user = userRepo.findByUsername(username);
         if(user == null)
