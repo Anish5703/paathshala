@@ -2,16 +2,19 @@ package com.paathshala.service;
 
 import com.paathshala.DTO.Category.CategoryRequest;
 import com.paathshala.DTO.Category.CategoryResponse;
+import com.paathshala.DTO.Course.CourseResponse;
 import com.paathshala.entity.Category;
+import com.paathshala.entity.Course;
 import com.paathshala.mapper.CategoryMapper;
+import com.paathshala.mapper.CourseMapper;
 import com.paathshala.repository.CategoryRepo;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
+@Service
 public class CategoryService {
 
     @Autowired
@@ -19,6 +22,28 @@ public class CategoryService {
 
     @Autowired
     private CategoryMapper categoryMapper;
+
+    @Autowired
+    private CourseMapper courseMapper;
+
+    public List<CategoryResponse> getAllCategory()
+    {
+        List<Category>  categories = categoryRepo.findAll();
+        if(categories.isEmpty())
+            return null;
+      return categoryMapper.toCategoryResponseList(categories);
+    }
+
+    @Transactional
+    public List<CourseResponse> getCoursesByCategory(int categoryId)
+    {
+        Optional<Category> category = categoryRepo.findById(categoryId);
+        List<Course> courses = category.get().getCourses();
+        if(courses.isEmpty())
+            return null;
+        else
+            return courseMapper.toCourseResponseList(courses);
+    }
 
     @Transactional
     public CategoryResponse addCategory(CategoryRequest request)
@@ -38,6 +63,8 @@ public class CategoryService {
     @Transactional
     public CategoryResponse editCategory(CategoryRequest request)
     {
+        if (request==null)
+            throw new IllegalArgumentException("Category cannot be null");
         Optional<Category> category = categoryRepo.findById(request.getId());
         Map<String,Object> message = new HashMap<>();
         if(category.isEmpty())
@@ -63,6 +90,8 @@ public class CategoryService {
     @Transactional
     public CategoryResponse removeCategory(int id)
     {
+        if(id<0)
+            throw new IllegalArgumentException("Category cannot be null");
         Optional<Category> category = categoryRepo.findById(id);
         Map<String,Object> message = new HashMap<>();
         if(category.isEmpty())

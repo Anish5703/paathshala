@@ -5,6 +5,8 @@ import com.paathshala.DTO.Category.CategoryResponse;
 import com.paathshala.entity.Category;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -21,6 +23,25 @@ public class CategoryMapper {
         response.setMessage(message);
         return response;
     }
+    public CategoryResponse toCategoryResponse(Category category)
+
+    {
+        CategoryResponse response = new CategoryResponse();
+        response.setId(category.getId());
+        response.setTitle(category.getTitle());
+        response.setDescription(category.getDescription());
+        return response;
+    }
+    public List<CategoryResponse> toCategoryResponseList(List<Category> categories)
+    {
+        List<CategoryResponse> response = new ArrayList<>();
+        for(Category category : categories)
+        {
+            response.add(toCategoryResponse(category));
+        }
+        return response;
+    }
+
 
     public Category toEntity(CategoryRequest request)
     {

@@ -7,9 +7,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class CourseRequest {
+
+    private int id;
 
     @NotBlank(message = "Title is required")
     private String title;
@@ -21,4 +22,13 @@ public class CourseRequest {
     private String description;
     private boolean isPublished;
     private int estimatedTime;
+
+    public CourseRequest(String title, int categoryId, double price, String description, boolean isPublished, int estimatedTime) {
+        this.title = title;
+        this.categoryId = categoryId;
+        this.price = price;
+        this.description = description;
+        this.isPublished = isPublished;
+        this.estimatedTime = estimatedTime;
+    }
 }
