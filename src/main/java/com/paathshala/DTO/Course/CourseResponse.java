@@ -1,5 +1,6 @@
 package com.paathshala.DTO.Course;
 
+import com.paathshala.DTO.Category.CategoryResponse;
 import com.paathshala.entity.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +19,7 @@ public class CourseResponse {
     // Optional: Include the data if successful
     private int id;
     private String title;
-    private Category category;
+    private CategoryResponse category;
     private double price;
     private String description;
     private boolean isPublished;
@@ -36,7 +37,7 @@ public class CourseResponse {
 
     }
 
-    public CourseResponse(int id, String title, Category category, double price, String description, boolean isPublished, int estimatedTime) {
+    public CourseResponse(int id, String title, CategoryResponse category, double price, String description, boolean isPublished, int estimatedTime) {
         this.id = id;
         this.title = title;
         this.category = category;
