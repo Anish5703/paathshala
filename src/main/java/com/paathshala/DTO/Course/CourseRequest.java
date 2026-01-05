@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CourseRequest {
 
-    private int id;
-
     @NotBlank(message = "Title is required")
     private String title;
 

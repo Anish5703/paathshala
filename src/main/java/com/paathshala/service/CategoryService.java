@@ -1,5 +1,6 @@
 package com.paathshala.service;
 
+import com.paathshala.DTO.Category.CategoryDetails;
 import com.paathshala.DTO.Category.CategoryRequest;
 import com.paathshala.DTO.Category.CategoryResponse;
 import com.paathshala.DTO.Course.CourseResponse;
@@ -26,12 +27,12 @@ public class CategoryService {
     @Autowired
     private CourseMapper courseMapper;
 
-    public List<CategoryResponse> getAllCategory()
+    public List<CategoryDetails> getAllCategory()
     {
         List<Category>  categories = categoryRepo.findAll();
         if(categories.isEmpty())
             return null;
-      return categoryMapper.toCategoryResponseList(categories);
+      return categoryMapper.toCategoryDetailsList(categories);
     }
 
     @Transactional
@@ -61,22 +62,22 @@ public class CategoryService {
     }
 
     @Transactional
-    public CategoryResponse editCategory(CategoryRequest request)
+    public CategoryResponse editCategory(CategoryRequest request,int categoryId)
     {
         if (request==null)
             throw new IllegalArgumentException("Category cannot be null");
-        Optional<Category> category = categoryRepo.findById(request.getId());
+        Optional<Category> category = categoryRepo.findById(categoryId);
         Map<String,Object> message = new HashMap<>();
         if(category.isEmpty())
         {
-           message.put("status","No Category found with id:"+request.getId());
-           category.get().setId(request.getId());
+           message.put("status","No Category found with id:"+categoryId);
+           category.get().setId(categoryId);
            return categoryMapper.toCategoryResponse(category.get(),true,message);
         }
         Category modifiedCategory = categoryMapper.toEntity(request);
         Optional<Category> savedCategory = categoryRepo.findByTitle(request.getTitle());
 
-        if(savedCategory.isPresent() && savedCategory.get().getId() != request.getId())
+        if(savedCategory.isPresent() && savedCategory.get().getId() != categoryId)
         {
             message.put("status","Category title duplication");
             return categoryMapper.toCategoryResponse(modifiedCategory,true,message);
@@ -88,18 +89,23 @@ public class CategoryService {
     }
 
     @Transactional
-    public CategoryResponse removeCategory(int id)
+    public CategoryResponse removeCategory(int categoryId)
     {
-        if(id<0)
+        if(categoryId<0)
             throw new IllegalArgumentException("Category cannot be null");
-        Optional<Category> category = categoryRepo.findById(id);
+        Optional<Category> category = categoryRepo.findById(categoryId);
         Map<String,Object> message = new HashMap<>();
         if(category.isEmpty())
         {
             message.put("status","No category found");
             Category dummy = new Category();
-            dummy.setId(id);
+            dummy.setId(categoryId);
             return categoryMapper.toCategoryResponse(dummy,true,message);
+        }
+        if(!category.get().getCourses().isEmpty())
+        {
+            message.put("status","Cannot delete the category since it has courses");
+            return categoryMapper.toCategoryResponse(category.get(),true,message);
         }
         categoryRepo.delete(category.get());
         message.put("status","Category removed");

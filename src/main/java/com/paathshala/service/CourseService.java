@@ -1,5 +1,6 @@
 package com.paathshala.service;
 
+import com.paathshala.DTO.Course.CourseDetails;
 import com.paathshala.DTO.Course.CourseRequest;
 import com.paathshala.DTO.Course.CourseResponse;
 import com.paathshala.entity.Category;
@@ -31,15 +32,16 @@ public class CourseService {
 
 
     @Transactional
-    public List<CourseResponse> getAllCourse()
+    public List<CourseDetails> getAllCourse()
     {
         List<Course> courses = courseRepo.findAll();
         if(courses.isEmpty())
         {
             return null;
         }
-        return courseMapper.toCourseResponseList(courses);
+        return courseMapper.toCourseDetailsList(courses);
     }
+
 
 
    @Transactional
@@ -65,16 +67,16 @@ public class CourseService {
 
     }
     @Transactional
-    public CourseResponse editCourse(CourseRequest request)
+    public CourseResponse editCourse(CourseRequest request,int courseId)
     {
         if(request==null)
             throw new IllegalArgumentException("Course cannot be null");
-        Optional<Course> course = courseRepo.findById(request.getId());
+        Optional<Course> course = courseRepo.findById(courseId);
         Map<String,Object> message = new HashMap<>();
         if(course.isEmpty())
         {
-            message.put("status","No Course found with id:"+request.getId());
-            course.get().setId(request.getId());
+            message.put("status","No Course found with id:"+courseId);
+            course.get().setId(courseId);
             return courseMapper.toCourseResponseError(course.get(),true,message);
         }
 
@@ -84,7 +86,7 @@ public class CourseService {
 
         Optional<Course> savedCourse = courseRepo.findByTitle(request.getTitle());
 
-        if(savedCourse.isPresent() && savedCourse.get().getId() != request.getId())
+        if(savedCourse.isPresent() && savedCourse.get().getId() != courseId)
         {
             message.put("status","Category title duplication");
             return courseMapper.toCourseResponseError(modifiedCourse,true,message);
@@ -95,15 +97,15 @@ public class CourseService {
 
     }
     @Transactional
-    public CourseResponse removeCourse(CourseRequest request)
+    public CourseResponse removeCourse(int courseId)
     {
-        if(request==null)
+        if(courseId<1)
             throw new IllegalArgumentException("Course cannot be null");
-        Optional<Course> course = courseRepo.findById(request.getId());
+        Optional<Course> course = courseRepo.findById(courseId);
         Map<String,Object> message = new HashMap<>();
         if(course.isEmpty())
         {
-            course.get().setId(request.getId());
+            course.get().setId(courseId);
             message.put("status","No course found ");
             return courseMapper.toCourseResponseError(course.get(),true,message);
         }

@@ -1,6 +1,8 @@
 package com.paathshala.mapper;
 
+import com.paathshala.DTO.Category.CategoryDetails;
 import com.paathshala.DTO.Category.CategoryResponse;
+import com.paathshala.DTO.Course.CourseDetails;
 import com.paathshala.DTO.Course.CourseRequest;
 import com.paathshala.DTO.Course.CourseResponse;
 import com.paathshala.entity.Category;
@@ -55,6 +57,19 @@ public class CourseMapper {
                 course.getEstimatedTime()
                 );
     }
+    public CourseDetails toCourseDetails(Course course)
+    {
+        CategoryDetails categoryDetails = categoryMapper.toCategoryDetails(course.getCategory());
+        return new CourseDetails(
+                course.getId(),
+                course.getTitle(),
+                categoryDetails,
+                course.getPrice(),
+                course.getDescription(),
+                course.isPublished(),
+                course.getEstimatedTime()
+        );
+    }
 
     public List<CourseResponse> toCourseResponseList(List<Course> courses)
     {
@@ -65,6 +80,17 @@ public class CourseMapper {
         }
         return response;
     }
+
+    public List<CourseDetails> toCourseDetailsList(List<Course> courses)
+    {
+        List<CourseDetails> response = new ArrayList<>();
+        for(Course course : courses)
+        {
+            response.add(toCourseDetails(course));
+        }
+        return response;
+    }
+
 
     public Course toEntity(CourseRequest request)
     {

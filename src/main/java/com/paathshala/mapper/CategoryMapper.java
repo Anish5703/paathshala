@@ -1,5 +1,6 @@
 package com.paathshala.mapper;
 
+import com.paathshala.DTO.Category.CategoryDetails;
 import com.paathshala.DTO.Category.CategoryRequest;
 import com.paathshala.DTO.Category.CategoryResponse;
 import com.paathshala.entity.Category;
@@ -32,6 +33,14 @@ public class CategoryMapper {
         response.setDescription(category.getDescription());
         return response;
     }
+    public CategoryDetails toCategoryDetails(Category category)
+    {
+        CategoryDetails details = new CategoryDetails();
+        details.setId(category.getId());
+        details.setTitle(category.getTitle());
+        details.setDescription(category.getDescription());
+        return details;
+    }
     public List<CategoryResponse> toCategoryResponseList(List<Category> categories)
     {
         List<CategoryResponse> response = new ArrayList<>();
@@ -42,12 +51,19 @@ public class CategoryMapper {
         return response;
     }
 
+  public List<CategoryDetails> toCategoryDetailsList(List<Category> categories)
+  {
+      List<CategoryDetails> details = new ArrayList<>();
+      for(Category category : categories)
+      {
+          details.add(toCategoryDetails(category));
+      }
+      return details;
+  }
 
     public Category toEntity(CategoryRequest request)
     {
-        Category category = new Category(request.getTitle(), request.getDescription());
-        if(request.getId()>0)
-            category.setId(request.getId());
-        return category;
+       return new Category(request.getTitle(), request.getDescription());
+
     }
 }

@@ -11,7 +11,6 @@ import lombok.Setter;
 @Setter
 public class CategoryRequest {
 
-    private int id;
     @NotBlank(message = "Category title is required")
     private String title;
 

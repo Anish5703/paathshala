@@ -1,5 +1,6 @@
 package com.paathshala.controller;
 
+import com.paathshala.DTO.Course.CourseDetails;
 import com.paathshala.DTO.Course.CourseRequest;
 import com.paathshala.DTO.Course.CourseResponse;
 import com.paathshala.service.CourseService;
@@ -21,9 +22,9 @@ public class CourseController {
     private CourseService courseService;
 
     @GetMapping("/all")
-    public ResponseEntity<List<CourseResponse>> allCourses()
+    public ResponseEntity<List<CourseDetails>> allCourses()
     {
-        List<CourseResponse> response = courseService.getAllCourse();
+        List<CourseDetails> response = courseService.getAllCourse();
         HttpHeaders header = new HttpHeaders();
         header.set("Content-Type","application/json");
         if(response.isEmpty())
@@ -45,11 +46,11 @@ public class CourseController {
         return  ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).body(response);
     }
 
-    @PostMapping("/edit")
+    @PutMapping("/edit/{courseId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CourseResponse> modifyCourse(@Valid @RequestBody CourseRequest request)
+    public ResponseEntity<CourseResponse> modifyCourse(@Valid @RequestBody CourseRequest request,@PathVariable int courseId)
     {
-        CourseResponse response = courseService.editCourse(request);
+        CourseResponse response = courseService.editCourse(request,courseId);
         HttpHeaders header = new HttpHeaders();
         header.set("Content-Type","application/json");
         if(!response.isError())
@@ -57,5 +58,18 @@ public class CourseController {
         else
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).body(response);
 
+    }
+
+    @DeleteMapping("/remove/{courseId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<CourseResponse> deleteCourse(@PathVariable int courseId)
+    {
+        CourseResponse response = courseService.removeCourse(courseId);
+        HttpHeaders header = new HttpHeaders();
+        header.set("Content-Type","application/json");
+        if(!response.isError())
+            return ResponseEntity.status(HttpStatus.ACCEPTED).headers(header).body(response);
+        else
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).body(response);
     }
 }
