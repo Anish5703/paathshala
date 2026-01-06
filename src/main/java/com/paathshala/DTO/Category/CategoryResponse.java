@@ -12,12 +12,13 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryResponse {
-    private Map<String,Object> message;
-    private boolean isError;
+
 
     private int id;
     private String title;
     private String description;
+    private Map<String,Object> message;
+    private boolean isError;
 
     public CategoryResponse(Map<String,Object> message, boolean isError) {
         this.message = message;

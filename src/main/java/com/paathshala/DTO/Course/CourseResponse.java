@@ -2,6 +2,7 @@ package com.paathshala.DTO.Course;
 
 import com.paathshala.DTO.Category.CategoryResponse;
 import com.paathshala.entity.Category;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class CourseResponse {
     private CategoryResponse category;
     private double price;
     private String description;
+    @Schema(name="idPublished")
     private boolean isPublished;
     private int estimatedTime;
 

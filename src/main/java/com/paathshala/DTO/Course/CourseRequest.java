@@ -1,5 +1,6 @@
 package com.paathshala.DTO.Course;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ public class CourseRequest {
 
     private double price;
     private String description;
+    @Schema(name = "isPublished")
     private boolean isPublished;
     private int estimatedTime;
 
