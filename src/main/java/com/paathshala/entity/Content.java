@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @Inheritance(strategy=InheritanceType.JOINED)
 @Entity
 @Table(name="content_tbl")
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -24,12 +23,17 @@ public abstract class Content {
     @Column(nullable = false)
     private String title;
     @ManyToOne
-    @JoinColumn(name="content_id")
+    @JoinColumn(name="course_id")
     private Course course;
     private String description;
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-
+public Content(String title,Course course,String description)
+{
+    this.title=title;
+    this.course=course;
+    this.description=description;
+}
 
 }

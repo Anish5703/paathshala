@@ -8,16 +8,24 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Table(name="notes_tbl")
+@Table(name="note_tbl")
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class Notes extends Content{
+public class Note extends Content{
 
     @Column(nullable = false)
     private String contentUrl;
     private String contentType;
+    private Byte contentSize;
 
+    public Note(String title,Course course,String description,String contentUrl,String contentType,Byte contentSize)
+    {
+        super(title,course,description);
+        this.contentUrl=contentUrl;
+        this.contentType=contentType;
+        this.contentSize=contentSize;
+    }
 }
