@@ -30,7 +30,7 @@ public class CourseController {
         if(response.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).headers(header).body(response);
         else
-            return ResponseEntity.status(HttpStatus.FOUND).headers(header).body(response);
+            return ResponseEntity.status(HttpStatus.OK).headers(header).body(response);
     }
 
     @PostMapping("/add")

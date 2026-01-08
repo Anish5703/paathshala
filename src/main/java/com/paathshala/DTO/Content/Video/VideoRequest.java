@@ -2,11 +2,11 @@ package com.paathshala.DTO.Content.Video;
 
 import com.paathshala.DTO.Content.ContentRegister;
 
-public class VideoRegister extends ContentRegister {
+public class VideoRequest extends ContentRegister {
 
     private Integer contentLength;
 
-    public VideoRegister(String title, int courseId, String description, String contentUrl, String contentType, Byte contentSize, Integer contentLength) {
+    public VideoRequest(String title, int courseId, String description, String contentUrl, String contentType, Byte contentSize, Integer contentLength) {
         super(title, courseId, description, contentUrl, contentType, contentSize);
         this.contentLength = contentLength;
     }

@@ -29,7 +29,7 @@ public class CategoryController {
         HttpHeaders header= new HttpHeaders();
         header.set("Content-Type","application/json");
         if(!response.isEmpty())
-            return ResponseEntity.status(HttpStatus.FOUND).headers(header).body(response);
+            return ResponseEntity.status(HttpStatus.OK).headers(header).body(response);
         else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).headers(header).body(response);
     }
@@ -41,7 +41,7 @@ public class CategoryController {
         HttpHeaders header= new HttpHeaders();
         header.set("Content-Type","application/json");
         if(!response.isEmpty())
-            return ResponseEntity.status(HttpStatus.FOUND).headers(header).body(response);
+            return ResponseEntity.status(HttpStatus.OK).headers(header).body(response);
         else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).headers(header).body(response);
 

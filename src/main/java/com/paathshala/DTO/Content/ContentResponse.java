@@ -1,5 +1,6 @@
 package com.paathshala.DTO.Content;
 
+import com.paathshala.DTO.Course.CourseDetails;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import java.util.Map;
 public class ContentResponse {
     private int id;
     private String title;
-    private int courseId;
+    private CourseDetails course;
     private String description;
     private String contentUrl;
     private String contentType;
@@ -23,4 +24,11 @@ public class ContentResponse {
 
     private Map<String,Object> message;
     private boolean isError;
+
+    public ContentResponse(String title,boolean isError,Map<String,Object> message)
+    {
+        this.title=title;
+        this.message=message;
+        this.isError=isError;
+    }
 }
