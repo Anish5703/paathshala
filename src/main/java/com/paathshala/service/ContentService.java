@@ -31,6 +31,8 @@ public class ContentService {
         this.contentMapper=contentMapper;
     }
 
+
+
     @Transactional
     public NoteResponse addNote(NoteRequest noteRequest,String courseTitle)
     {
@@ -54,6 +56,7 @@ public class ContentService {
             }
         }
         Note note = contentMapper.toNoteEntity(noteRequest);
+        note.setCourse(course.get());
         note = noteRepo.save(note);
         message.put("status","New note added to the course "+courseTitle);
         return contentMapper.toNoteResponseSuccess(note,false,message);
