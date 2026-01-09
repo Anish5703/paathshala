@@ -1,10 +1,10 @@
 package com.paathshala.controller;
 
 
-import com.paathshala.DTO.Login.LoginResponse;
-import com.paathshala.DTO.Register.OauthRegisterRequest;
-import com.paathshala.DTO.Register.RegisterRequest;
-import com.paathshala.DTO.Register.RegisterResponse;
+import com.paathshala.dto.login.LoginResponse;
+import com.paathshala.dto.register.OauthRegisterRequest;
+import com.paathshala.dto.register.RegisterRequest;
+import com.paathshala.dto.register.RegisterResponse;
 import com.paathshala.model.Role;
 import com.paathshala.service.OauthService;
 import jakarta.servlet.http.HttpServletRequest;

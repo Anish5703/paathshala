@@ -1,8 +1,8 @@
 package com.paathshala.mapper;
 
-import com.paathshala.DTO.Content.Note.NoteDetails;
-import com.paathshala.DTO.Content.Note.NoteRequest;
-import com.paathshala.DTO.Content.Note.NoteResponse;
+import com.paathshala.dto.content.Note.NoteDetails;
+import com.paathshala.dto.content.Note.NoteRequest;
+import com.paathshala.dto.content.Note.NoteResponse;
 import com.paathshala.entity.Note;
 import org.springframework.stereotype.Component;
 

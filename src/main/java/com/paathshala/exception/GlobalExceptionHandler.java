@@ -1,7 +1,9 @@
 package com.paathshala.exception;
 
-import com.paathshala.DTO.Category.CategoryResponse;
-import com.paathshala.DTO.Content.Note.NoteResponse;
+import com.paathshala.dto.category.CategoryResponse;
+import com.paathshala.dto.content.Note.NoteResponse;
+import com.paathshala.dto.ErrorResponse;
+import com.paathshala.model.ErrorType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -64,4 +66,33 @@ public class GlobalExceptionHandler {
         ));
         return new ResponseEntity<>(resp,HttpStatus.INTERNAL_SERVER_ERROR);
     }
+    @ExceptionHandler(NoteDeletionFailedException.class)
+    public ResponseEntity<NoteResponse> handleNoteNotDeleted(NoteDeletionFailedException ex)
+    {
+        log.error("Note deletion error encountered: {}",ex.getLocalizedMessage());
+        NoteResponse resp = new NoteResponse();
+        resp.setError(true);
+        resp.setMessage(Map.of(
+                "status", "Note deletion failed",
+                "detail", ex.getMessage()
+        ));
+        return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
+
+    }
+    @ExceptionHandler(CourseNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCourseNotFound(CourseNotFoundException ex)
+    {
+        log.error("Course not found : {}",ex.getLocalizedMessage());
+        ErrorResponse resp = new ErrorResponse();
+        resp.setErrorType(ErrorType.COURSE_NOT_FOUND);
+        resp.setMessage(ex.getMessage());
+        return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
+
+    }
+
+
+
+
+
+
 }

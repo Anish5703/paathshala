@@ -1,10 +1,10 @@
 package com.paathshala.service;
 
 
-import com.paathshala.DTO.Login.LoginRequest;
-import com.paathshala.DTO.Login.LoginResponse;
-import com.paathshala.DTO.Register.RegisterRequest;
-import com.paathshala.DTO.Register.RegisterResponse;
+import com.paathshala.dto.login.LoginRequest;
+import com.paathshala.dto.login.LoginResponse;
+import com.paathshala.dto.register.RegisterRequest;
+import com.paathshala.dto.register.RegisterResponse;
 import com.paathshala.entity.Admin;
 import com.paathshala.entity.Student;
 import com.paathshala.entity.User;

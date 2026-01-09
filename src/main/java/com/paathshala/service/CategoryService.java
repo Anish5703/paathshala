@@ -1,9 +1,9 @@
 package com.paathshala.service;
 
-import com.paathshala.DTO.Category.CategoryDetails;
-import com.paathshala.DTO.Category.CategoryRequest;
-import com.paathshala.DTO.Category.CategoryResponse;
-import com.paathshala.DTO.Course.CourseResponse;
+import com.paathshala.dto.category.CategoryDetails;
+import com.paathshala.dto.category.CategoryRequest;
+import com.paathshala.dto.category.CategoryResponse;
+import com.paathshala.dto.course.CourseResponse;
 import com.paathshala.entity.Category;
 import com.paathshala.entity.Course;
 import com.paathshala.mapper.CategoryMapper;

@@ -1,10 +1,10 @@
 package com.paathshala.controller;
 
 
-import com.paathshala.DTO.Login.LoginRequest;
-import com.paathshala.DTO.Login.LoginResponse;
-import com.paathshala.DTO.Register.RegisterRequest;
-import com.paathshala.DTO.Register.RegisterResponse;
+import com.paathshala.dto.login.LoginRequest;
+import com.paathshala.dto.login.LoginResponse;
+import com.paathshala.dto.register.RegisterRequest;
+import com.paathshala.dto.register.RegisterResponse;
 import com.paathshala.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

@@ -1,12 +1,14 @@
 package com.paathshala.service;
 
-import com.paathshala.DTO.Content.Note.NoteDetails;
-import com.paathshala.DTO.Content.Note.NoteRequest;
-import com.paathshala.DTO.Content.Note.NoteResponse;
+import com.paathshala.dto.content.Note.NoteDetails;
+import com.paathshala.dto.content.Note.NoteRequest;
+import com.paathshala.dto.content.Note.NoteResponse;
 import com.paathshala.entity.Content;
 import com.paathshala.entity.Course;
 import com.paathshala.entity.Note;
+import com.paathshala.exception.CourseNotFoundException;
 import com.paathshala.exception.FileUploadFailedException;
+import com.paathshala.exception.NoteDeletionFailedException;
 import com.paathshala.mapper.ContentMapper;
 import com.paathshala.repository.CourseRepo;
 import com.paathshala.repository.NoteRepo;
@@ -18,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -50,7 +51,7 @@ public class ContentService {
         /* Find course object from database using title */
       Optional<Course> course =  courseRepo.findByTitle(courseTitle);
         Map<String,Object> message = new HashMap<>();
-        /* Return error if course not found*/
+        /* Return error if course is not found*/
         if(course.isEmpty())
         {
             message.put("status","Course not found");
@@ -97,7 +98,6 @@ public class ContentService {
     {
         /* Find course object from database using title */
         Optional<Course> course =  courseRepo.findByTitle(courseTitle);
-        Map<String,Object> message = new HashMap<>();
         /*
          Return null if course is not found in the database
          else return the @NoteDetails List*/
@@ -147,7 +147,7 @@ public class ContentService {
         /* Retrieve Course object from database using title */
         Optional<Course> course =  courseRepo.findByTitle(courseTitle);
         Map<String,Object> message = new HashMap<>();
-        /* Return error if course not found*/
+        /* Return error if course is not found*/
         if(course.isEmpty())
         {
             message.put("status","No course "+courseTitle+" found");
@@ -170,10 +170,12 @@ public class ContentService {
         */
         if(!note.get().getTitle().equals(noteTitle))
         {
-            Optional<Note> duplicateNote = noteRepo.findByTitle(noteTitle);
-            message.put("status","Note title error");
-            message.put("details","Note "+noteTitle+" already exists");
-            return contentMapper.toNoteResponseError(noteTitle,true,message);
+            boolean duplicateNote = noteRepo.existsByTitleAndCourse(noteTitle,course.get());
+            if(duplicateNote) {
+                message.put("status", "Note title error");
+                message.put("details", "Note " + noteTitle + " already exists");
+                return contentMapper.toNoteResponseError(noteTitle, true, message);
+            }
         }
         /*
          Map Note dto to entity
@@ -200,12 +202,46 @@ public class ContentService {
 
     }
 
+    @Transactional
+    public NoteResponse removeNote(String courseTitle,String contentTitle) throws NoteDeletionFailedException
+    {
+        try {
+            /* Retrieve Course from title
+            check is course exists
+            if not found throw an exception
+             */
+            Optional<Course> course = Optional.ofNullable(courseRepo.findByTitle(courseTitle)
+                    .orElseThrow(
+                            () -> new CourseNotFoundException("Course " + courseTitle + " not found to delete note " + contentTitle)));
+
+            Map<String, Object> message = new HashMap<>();
+            if (course.isEmpty())
+                throw new NoteDeletionFailedException("No course found with title " + courseTitle);
+            /* Retrieve Note from title and course
+            if not found throw an exception
+            if found delete the note from repository
+             */
+            boolean isExists = noteRepo.existsByTitleAndCourse(contentTitle, course.get());
+            if (!isExists)
+                throw new NoteDeletionFailedException("No note " + contentTitle + " found on course " + courseTitle);
+            Optional<Note> note = noteRepo.findByTitleAndCourse(contentTitle, course.get());
+            noteRepo.delete(note.get());
+            message.put("status", "Note deleted");
+            return contentMapper.toNoteResponseSuccess(note.get(), false, message);
+        }
+        catch(Exception e)
+        {
+            logger.error("Note delete error : {}",e.getMessage());
+            throw new NoteDeletionFailedException("Failed to delete note due to "+e.getLocalizedMessage());
+        }
+
+    }
 
 
        /*
         Generate unique file url
         save to the directory
-        save content properties i.e url,type,size
+        save content properties i.e. url,type,size
         returns null object if operation fails and content object if succeeds
          */
     @Transactional

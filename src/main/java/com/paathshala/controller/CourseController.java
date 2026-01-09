@@ -1,8 +1,8 @@
 package com.paathshala.controller;
 
-import com.paathshala.DTO.Course.CourseDetails;
-import com.paathshala.DTO.Course.CourseRequest;
-import com.paathshala.DTO.Course.CourseResponse;
+import com.paathshala.dto.course.CourseDetails;
+import com.paathshala.dto.course.CourseRequest;
+import com.paathshala.dto.course.CourseResponse;
 import com.paathshala.service.CourseService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,7 @@ public class CourseController {
         return  ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).body(response);
     }
 
-    @PutMapping("/edit/{courseId}")
+    @PutMapping("/{courseId}/edit")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CourseResponse> modifyCourse(@Valid @RequestBody CourseRequest request,@PathVariable int courseId)
     {
@@ -60,7 +60,7 @@ public class CourseController {
 
     }
 
-    @DeleteMapping("/remove/{courseId}")
+    @DeleteMapping("/{courseId}/remove")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CourseResponse> deleteCourse(@PathVariable int courseId)
     {

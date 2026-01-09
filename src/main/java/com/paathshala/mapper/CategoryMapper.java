@@ -1,8 +1,8 @@
 package com.paathshala.mapper;
 
-import com.paathshala.DTO.Category.CategoryDetails;
-import com.paathshala.DTO.Category.CategoryRequest;
-import com.paathshala.DTO.Category.CategoryResponse;
+import com.paathshala.dto.category.CategoryDetails;
+import com.paathshala.dto.category.CategoryRequest;
+import com.paathshala.dto.category.CategoryResponse;
 import com.paathshala.entity.Category;
 import org.springframework.stereotype.Component;
 

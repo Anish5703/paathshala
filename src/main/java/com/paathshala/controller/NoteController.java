@@ -1,13 +1,10 @@
 package com.paathshala.controller;
 
-import com.paathshala.DTO.Content.Note.NoteDetails;
-import com.paathshala.DTO.Content.Note.NoteRequest;
-import com.paathshala.DTO.Content.Note.NoteResponse;
-import com.paathshala.DTO.Course.CourseResponse;
-import com.paathshala.exception.FileUploadFailedException;
+import com.paathshala.dto.content.Note.NoteDetails;
+import com.paathshala.dto.content.Note.NoteRequest;
+import com.paathshala.dto.content.Note.NoteResponse;
 import com.paathshala.service.ContentService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +12,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -72,7 +68,7 @@ public class NoteController {
     else
         return  ResponseEntity.status(HttpStatus.NOT_FOUND).headers(header).body(notes);
 }
-@PutMapping("/edit/{contentTitle}")
+@PutMapping("/{contentTitle}/edit")
     public ResponseEntity<NoteResponse> modifyNote(@PathVariable String contentTitle,
                                                    @PathVariable String courseTitle,
                                                    @Valid @RequestBody NoteRequest noteRequest,
@@ -88,6 +84,22 @@ public class NoteController {
         return ResponseEntity.status(HttpStatus.OK).headers(header).body(response);
     else
         return  ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).body(response);
+}
+
+@DeleteMapping("/{contentTitle}/remove")
+    public ResponseEntity<NoteResponse> deleteNote(@PathVariable String contentTitle,
+                                                   @PathVariable String courseTitle)
+{
+    String decodedContentTitle = URLDecoder.decode(contentTitle, StandardCharsets.UTF_8);
+    String decodedCourseTitle = URLDecoder.decode(courseTitle, StandardCharsets.UTF_8);
+    NoteResponse response = contentService.removeNote(decodedCourseTitle,decodedContentTitle);
+    HttpHeaders header = new HttpHeaders();
+    header.set("Content-Type","application/json");
+    if(!response.isError())
+        return ResponseEntity.status(HttpStatus.ACCEPTED).headers(header).body(response);
+    else
+        return  ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).body(response);
+
 }
 
 }
