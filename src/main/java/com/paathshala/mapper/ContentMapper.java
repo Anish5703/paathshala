@@ -26,9 +26,6 @@ public class ContentMapper {
         Note note = new Note();
         note.setTitle(request.getTitle());
         note.setDescription(request.getDescription());
-        note.setContentUrl(request.getContentUrl());
-        note.setContentType(request.getContentType());
-        note.setContentSize(request.getContentSize());
         return note;
     }
 

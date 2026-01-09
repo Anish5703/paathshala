@@ -67,27 +67,29 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(resp,HttpStatus.INTERNAL_SERVER_ERROR);
     }
     @ExceptionHandler(NoteDeletionFailedException.class)
-    public ResponseEntity<NoteResponse> handleNoteNotDeleted(NoteDeletionFailedException ex)
+    public ResponseEntity<ErrorResponse> handleNoteNotDeleted(NoteDeletionFailedException ex)
     {
-        log.error("Note deletion error encountered: {}",ex.getLocalizedMessage());
-        NoteResponse resp = new NoteResponse();
-        resp.setError(true);
-        resp.setMessage(Map.of(
-                "status", "Note deletion failed",
-                "detail", ex.getMessage()
-        ));
+        log.error(" {} : {}",ex.getMessage(),ex.getCause().getMessage());
+        ErrorResponse resp = new ErrorResponse(ErrorType.NOTE_NOT_DELETED,ex.getMessage());
         return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
 
     }
     @ExceptionHandler(CourseNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleCourseNotFound(CourseNotFoundException ex)
     {
-        log.error("Course not found : {}",ex.getLocalizedMessage());
+        log.error("Course not found : {} ",ex.getMessage());
         ErrorResponse resp = new ErrorResponse();
         resp.setErrorType(ErrorType.COURSE_NOT_FOUND);
         resp.setMessage(ex.getMessage());
         return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
 
+    }
+    @ExceptionHandler(NoteNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoteNotFound(NoteNotFoundException ex)
+    {
+        log.error("Note not found : {}",ex.getMessage());
+        ErrorResponse resp = new ErrorResponse(ErrorType.NOTE_NOT_FOUND,ex.getMessage());
+        return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
     }
 
 
