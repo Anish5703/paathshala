@@ -26,14 +26,21 @@ public abstract class Content {
     @JoinColumn(name="course_id")
     private Course course;
     private String description;
+    @Column(nullable = false)
+    private String contentUrl;
+    private String contentType;
+    private Long contentSize;
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-public Content(String title,Course course,String description)
+public Content(String title,Course course,String description,String contentUrl,String contentType,Long contentSize)
 {
     this.title=title;
     this.course=course;
     this.description=description;
+    this.contentUrl=contentUrl;
+    this.contentSize=contentSize;
+    this.contentType=contentType;
 }
 
 }

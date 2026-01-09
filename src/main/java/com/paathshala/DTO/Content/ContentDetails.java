@@ -17,7 +17,7 @@ public class ContentDetails {
     private String description;
     private String contentUrl;
     private String contentType;
-    private Byte contentSize;
+    private Long contentSize;
     private LocalDateTime createdAt;
 
 }

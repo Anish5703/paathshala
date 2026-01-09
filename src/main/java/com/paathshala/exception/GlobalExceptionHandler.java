@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.IOException;
 import java.util.Map;
 
 @Slf4j
@@ -15,14 +16,13 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     /**
-     * Catches all database-related exceptions (Implicitly thrown by Spring/Hibernate)
+     * Handles database-related exceptions
      */
     @ExceptionHandler(DataAccessException.class)
     public ResponseEntity<CategoryResponse> handleDatabaseError(DataAccessException ex) {
-        // Log the actual error for the developer/admin
-        log.error("Database error encountered: {}", ex.getMessage());
 
-        // Create a user-friendly response
+        log.error("Database error encountered: {}", ex.getMessage(), ex);
+
         CategoryResponse resp = new CategoryResponse();
         resp.setError(true);
         resp.setMessage(Map.of(
@@ -30,7 +30,24 @@ public class GlobalExceptionHandler {
                 "detail", "The system is currently unable to process your request. Please try again later."
         ));
 
-        // Return 503 Service Unavailable or 500 Internal Server Error
         return new ResponseEntity<>(resp, HttpStatus.SERVICE_UNAVAILABLE);
+    }
+
+    /**
+     * Handles file & IO related exceptions
+     */
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<CategoryResponse> handleIOException(IOException ex) {
+
+        log.error("IO error encountered: {}", ex.getMessage(), ex);
+
+        CategoryResponse resp = new CategoryResponse();
+        resp.setError(true);
+        resp.setMessage(Map.of(
+                "status", "File error",
+                "detail", "File processing failed. Please try again later."
+        ));
+
+        return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

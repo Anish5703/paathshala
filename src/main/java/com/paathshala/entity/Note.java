@@ -16,16 +16,10 @@ import lombok.Setter;
 @Setter
 public class Note extends Content{
 
-    @Column(nullable = false)
-    private String contentUrl;
-    private String contentType;
-    private Byte contentSize;
 
-    public Note(String title,Course course,String description,String contentUrl,String contentType,Byte contentSize)
+    public Note(String title,Course course,String description,String contentUrl,String contentType,Long contentSize)
     {
-        super(title,course,description);
-        this.contentUrl=contentUrl;
-        this.contentType=contentType;
-        this.contentSize=contentSize;
+        super(title,course,description,contentUrl,contentType,contentSize);
+
     }
 }

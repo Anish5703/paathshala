@@ -13,18 +13,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Video extends Content{
-
-    @Column(nullable = false)
-    private String contentUrl;
-    private String contentType;
-    private Byte contentSize;
     private Integer contentLength; //measure in seconds
 
-    public Video(String title, Course course, String description, String contentUrl, String contentType, Byte contentSize, Integer contentLength)
+    public Video(String title, Course course, String description, String contentUrl, String contentType, Long contentSize, Integer contentLength)
     {
-        super(title,course,description);
-        this.contentUrl=contentUrl;
-        this.contentType=contentType;
-        this.contentSize=contentSize;
+        super(title,course,description,contentUrl,contentType,contentSize);
+        this.contentLength=contentLength;
     }
 }

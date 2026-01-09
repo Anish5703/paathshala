@@ -17,9 +17,8 @@ public class ContentRegister {
     private String title;
     private int courseId;
     private String description;
-    private String contentUrl;
     private String contentType;
-    private Byte contentSize;
+    private Long contentSize;
 
     public ContentRegister(String title,int courseId,String description)
     {

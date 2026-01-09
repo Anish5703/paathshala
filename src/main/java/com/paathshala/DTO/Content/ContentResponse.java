@@ -19,7 +19,7 @@ public class ContentResponse {
     private String description;
     private String contentUrl;
     private String contentType;
-    private Byte contentSize;
+    private Long contentSize;
     private LocalDateTime createdAt;
 
     private Map<String,Object> message;
