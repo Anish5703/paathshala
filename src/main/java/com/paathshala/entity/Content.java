@@ -30,6 +30,7 @@ public abstract class Content {
     private String contentUrl;
     private String contentType;
     private Long contentSize;
+    private String contentHash;
     @CreationTimestamp
     private LocalDateTime createdAt;
 

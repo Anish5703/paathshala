@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class CourseService {
@@ -37,7 +34,7 @@ public class CourseService {
         List<Course> courses = courseRepo.findAll();
         if(courses.isEmpty())
         {
-            return null;
+            return Collections.emptyList();
         }
         return courseMapper.toCourseDetailsList(courses);
     }

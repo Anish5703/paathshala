@@ -4,6 +4,7 @@ import com.paathshala.DTO.Content.Note.NoteDetails;
 import com.paathshala.DTO.Content.Note.NoteRequest;
 import com.paathshala.DTO.Content.Note.NoteResponse;
 import com.paathshala.DTO.Course.CourseResponse;
+import com.paathshala.exception.FileUploadFailedException;
 import com.paathshala.service.ContentService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class NoteController {
 @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<NoteResponse> createNote(@Valid @RequestBody NoteRequest request,
                                                    @PathVariable String courseTitle,
-                                                   MultipartFile file) throws IOException
+                                                   MultipartFile file)
 {
     String decodedCourseTitle = URLDecoder.decode(courseTitle,StandardCharsets.UTF_8);
     NoteResponse response = contentService.addNote(request,courseTitle,file);

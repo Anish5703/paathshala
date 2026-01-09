@@ -10,4 +10,8 @@ import java.util.Optional;
 public interface NoteRepo extends JpaRepository<Note,Integer> {
 
     Optional<List<Note>> findByCourse(Course course);
+    Optional<Note> findByTitle(String noteTitle);
+    Optional<Note> findByTitleAndCourse(String noteTitle,Course course);
+    boolean existsByTitleAndCourse(String noteTitle,Course course);
+
 }

@@ -1,6 +1,7 @@
 package com.paathshala.exception;
 
 import com.paathshala.DTO.Category.CategoryResponse;
+import com.paathshala.DTO.Content.Note.NoteResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -49,5 +50,18 @@ public class GlobalExceptionHandler {
         ));
 
         return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(FileUploadFailedException.class)
+    public ResponseEntity<NoteResponse> handleFileNotUpload(FileUploadFailedException ex)
+    {
+        log.error("File upload error encountered: {}",ex.getLocalizedMessage() );
+        NoteResponse resp = new NoteResponse();
+        resp.setError(true);
+        resp.setMessage(Map.of(
+                "status", "Upload failed",
+                "detail", ex.getMessage()
+        ));
+        return new ResponseEntity<>(resp,HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

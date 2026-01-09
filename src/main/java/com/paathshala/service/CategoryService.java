@@ -31,7 +31,7 @@ public class CategoryService {
     {
         List<Category>  categories = categoryRepo.findAll();
         if(categories.isEmpty())
-            return null;
+            return Collections.emptyList();
       return categoryMapper.toCategoryDetailsList(categories);
     }
 
@@ -41,7 +41,7 @@ public class CategoryService {
         Optional<Category> category = categoryRepo.findById(categoryId);
         List<Course> courses = category.get().getCourses();
         if(courses.isEmpty())
-            return null;
+            return Collections.emptyList();
         else
             return courseMapper.toCourseResponseList(courses);
     }

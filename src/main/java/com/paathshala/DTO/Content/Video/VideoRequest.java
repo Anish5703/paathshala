@@ -1,8 +1,8 @@
 package com.paathshala.DTO.Content.Video;
 
-import com.paathshala.DTO.Content.ContentRegister;
+import com.paathshala.DTO.Content.ContentRequest;
 
-public class VideoRequest extends ContentRegister {
+public class VideoRequest extends ContentRequest {
 
     private Integer contentLength;
 
