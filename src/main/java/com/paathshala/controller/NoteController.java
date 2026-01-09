@@ -72,4 +72,22 @@ public class NoteController {
     else
         return  ResponseEntity.status(HttpStatus.NOT_FOUND).headers(header).body(notes);
 }
+@PutMapping("/edit/{contentTitle}")
+    public ResponseEntity<NoteResponse> modifyNote(@PathVariable String contentTitle,
+                                                   @PathVariable String courseTitle,
+                                                   @Valid @RequestBody NoteRequest noteRequest,
+                                                    MultipartFile file)
+
+{
+    String decodedContentTitle = URLDecoder.decode(contentTitle, StandardCharsets.UTF_8);
+    String decodedCourseTitle = URLDecoder.decode(courseTitle, StandardCharsets.UTF_8);
+    NoteResponse response = contentService.editNote(noteRequest,decodedContentTitle,decodedCourseTitle,file);
+    HttpHeaders header = new HttpHeaders();
+    header.set("Content-Type","application/json");
+    if(!response.isError())
+        return ResponseEntity.status(HttpStatus.OK).headers(header).body(response);
+    else
+        return  ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).body(response);
+}
+
 }
