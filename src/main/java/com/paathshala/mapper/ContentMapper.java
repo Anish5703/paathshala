@@ -1,10 +1,13 @@
 package com.paathshala.mapper;
 
+import com.paathshala.DTO.Content.Note.NoteDetails;
 import com.paathshala.DTO.Content.Note.NoteRequest;
 import com.paathshala.DTO.Content.Note.NoteResponse;
 import com.paathshala.entity.Note;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -49,5 +52,26 @@ public class ContentMapper {
         response.setMessage(message);
         return response;
 
+    }
+    public NoteDetails toNoteDetails(Note note)
+    {
+        NoteDetails noteDetails = new NoteDetails();
+        noteDetails.setId(note.getId());
+        noteDetails.setTitle(note.getTitle());
+        noteDetails.setContentUrl(note.getContentUrl());
+        noteDetails.setContentType(note.getContentType());
+        noteDetails.setContentSize(note.getContentSize());
+        return noteDetails;
+    }
+
+    public List<NoteDetails> toNoteDetailsList(List<Note> notes)
+    {
+        if(notes.isEmpty()) return null;
+        List<NoteDetails> noteDetailsList = new ArrayList<>();
+        for(Note note : notes )
+        {
+            noteDetailsList.add(toNoteDetails(note));
+        }
+        return noteDetailsList;
     }
 }

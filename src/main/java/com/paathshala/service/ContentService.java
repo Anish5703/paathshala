@@ -1,6 +1,7 @@
 package com.paathshala.service;
 
 import com.paathshala.DTO.Content.ContentResponse;
+import com.paathshala.DTO.Content.Note.NoteDetails;
 import com.paathshala.DTO.Content.Note.NoteRequest;
 import com.paathshala.DTO.Content.Note.NoteResponse;
 import com.paathshala.entity.Content;
@@ -95,6 +96,20 @@ public class ContentService {
         return contentMapper.toNoteResponseSuccess(note,false,message);
     }
 
+    public List<NoteDetails> getNoteList(String courseTitle)
+    {
+        /* Find course object from database using title */
+        Optional<Course> course =  courseRepo.findByTitle(courseTitle);
+        Map<String,Object> message = new HashMap<>();
+        /* Return error if course is not found*/
+        if(course.isEmpty()) return null;
+        Optional<List<Note>> notes = noteRepo.findByCourse(course.get());
+        if(notes.isEmpty()) return null;
+
+        return contentMapper.toNoteDetailsList(notes.get());
+
+
+    }
     public NoteResponse getNoteByTitle(String noteTitle,String courseTitle)
     {
         /* Find course object from database using title */
