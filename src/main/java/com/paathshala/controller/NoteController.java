@@ -1,5 +1,6 @@
 package com.paathshala.controller;
 
+import com.paathshala.DTO.Content.Note.NoteDetails;
 import com.paathshala.DTO.Content.Note.NoteRequest;
 import com.paathshala.DTO.Content.Note.NoteResponse;
 import com.paathshala.DTO.Course.CourseResponse;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/{courseTitle}/note")
@@ -56,5 +58,17 @@ public class NoteController {
         return ResponseEntity.status(HttpStatus.OK).headers(header).body(response);
     else
         return  ResponseEntity.status(HttpStatus.NOT_FOUND).headers(header).body(response);
+}
+@GetMapping("/all")
+    public ResponseEntity<List<NoteDetails>> getNotes(@PathVariable String courseTitle)
+{
+    String decodeCourseTitle = URLDecoder.decode(courseTitle,StandardCharsets.UTF_8);
+    List<NoteDetails> notes = contentService.getNoteList(decodeCourseTitle);
+    HttpHeaders header = new HttpHeaders();
+    header.set("Content-Type","application/json");
+    if(!notes.isEmpty())
+        return ResponseEntity.status(HttpStatus.OK).headers(header).body(notes);
+    else
+        return  ResponseEntity.status(HttpStatus.NOT_FOUND).headers(header).body(notes);
 }
 }

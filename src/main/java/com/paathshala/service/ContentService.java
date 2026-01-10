@@ -96,6 +96,7 @@ public class ContentService {
         return contentMapper.toNoteResponseSuccess(note,false,message);
     }
 
+
     public List<NoteDetails> getNoteList(String courseTitle)
     {
         /* Find course object from database using title */
@@ -107,7 +108,6 @@ public class ContentService {
         if(notes.isEmpty()) return null;
 
         return contentMapper.toNoteDetailsList(notes.get());
-
 
     }
     public NoteResponse getNoteByTitle(String noteTitle,String courseTitle)
