@@ -8,7 +8,7 @@ public class VideoResponse extends ContentDetails {
 
     private Integer contentLength;
 
-    public VideoResponse(int id, String title, int courseId, String description, String contentUrl, String contentType, Byte contentSize, LocalDateTime createdAt, Integer contentLength) {
+    public VideoResponse(int id, String title, int courseId, String description, String contentUrl, String contentType, Long contentSize, LocalDateTime createdAt, Integer contentLength) {
         super(id, title, courseId, description, contentUrl, contentType, contentSize, createdAt);
         this.contentLength = contentLength;
     }

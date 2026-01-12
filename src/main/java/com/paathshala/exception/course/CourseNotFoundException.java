@@ -1,4 +1,4 @@
-package com.paathshala.exception;
+package com.paathshala.exception.course;
 
 public class CourseNotFoundException extends RuntimeException {
     public CourseNotFoundException(String message) {

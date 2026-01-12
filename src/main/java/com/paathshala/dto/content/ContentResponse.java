@@ -12,7 +12,7 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContentResponse {
-    private int id;
+    private Integer id;
     private String title;
     private CourseDetails course;
     private String description;

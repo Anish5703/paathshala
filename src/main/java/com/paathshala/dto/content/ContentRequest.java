@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class ContentRequest {
 
     private String title;
-    private int courseId;
+    private Integer courseId;
     private String description;
 
 

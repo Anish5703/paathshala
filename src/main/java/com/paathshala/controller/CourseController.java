@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
@@ -46,29 +48,31 @@ public class CourseController {
         return  ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).body(response);
     }
 
-    @PutMapping("/{courseId}/edit")
+    @PutMapping("/{courseTitle}/update")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CourseResponse> modifyCourse(@Valid @RequestBody CourseRequest request,@PathVariable int courseId)
+    public ResponseEntity<CourseResponse> modifyCourse(@Valid @RequestBody CourseRequest request,@PathVariable String courseTitle)
     {
-        CourseResponse response = courseService.editCourse(request,courseId);
+        String decodedCourseTitle = URLDecoder.decode(courseTitle, StandardCharsets.UTF_8);
+        CourseResponse response = courseService.updateCourse(request,decodedCourseTitle);
         HttpHeaders header = new HttpHeaders();
         header.set("Content-Type","application/json");
         if(!response.isError())
-            return ResponseEntity.status(HttpStatus.ACCEPTED).headers(header).body(response);
+            return ResponseEntity.status(HttpStatus.OK).headers(header).body(response);
         else
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).body(response);
 
     }
 
-    @DeleteMapping("/{courseId}/remove")
+    @DeleteMapping("/{courseTitle}/remove")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CourseResponse> deleteCourse(@PathVariable int courseId)
+    public ResponseEntity<CourseResponse> deleteCourse(@PathVariable String courseTitle)
     {
-        CourseResponse response = courseService.removeCourse(courseId);
+        String decodedCourseTitle = URLDecoder.decode(courseTitle,StandardCharsets.UTF_8);
+        CourseResponse response = courseService.removeCourse(decodedCourseTitle);
         HttpHeaders header = new HttpHeaders();
         header.set("Content-Type","application/json");
         if(!response.isError())
-            return ResponseEntity.status(HttpStatus.ACCEPTED).headers(header).body(response);
+            return ResponseEntity.status(HttpStatus.OK).headers(header).body(response);
         else
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).body(response);
     }

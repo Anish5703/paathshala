@@ -31,9 +31,11 @@ public class ContentMapper {
 
     public NoteResponse toNoteResponseError(String noteTitle, boolean isError, Map<String,Object> message)
     {
-        return new NoteResponse(
-                noteTitle, true, message
-        );
+        NoteResponse noteResponse = new NoteResponse();
+        noteResponse.setTitle(noteTitle);
+        noteResponse.setError(isError);
+        noteResponse.setMessage(message);
+        return noteResponse;
     }
     public NoteResponse toNoteResponseSuccess(Note note,boolean isError,Map<String,Object> message)
     {

@@ -1,6 +1,8 @@
 package com.paathshala.exception;
 
-public class FileUploadFailedException extends RuntimeException{
+import java.io.IOException;
+
+public class FileUploadFailedException extends  RuntimeException {
     public FileUploadFailedException(String message)
     {
         super(message);

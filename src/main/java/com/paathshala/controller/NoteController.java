@@ -77,7 +77,7 @@ public class NoteController {
 {
     String decodedContentTitle = URLDecoder.decode(contentTitle, StandardCharsets.UTF_8);
     String decodedCourseTitle = URLDecoder.decode(courseTitle, StandardCharsets.UTF_8);
-    NoteResponse response = contentService.editNote(noteRequest,decodedContentTitle,decodedCourseTitle,file);
+    NoteResponse response = contentService.updateNote(noteRequest,decodedContentTitle,decodedCourseTitle,file);
     HttpHeaders header = new HttpHeaders();
     header.set("Content-Type","application/json");
     if(!response.isError())

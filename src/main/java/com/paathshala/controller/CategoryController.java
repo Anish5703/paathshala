@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
@@ -34,10 +36,12 @@ public class CategoryController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).headers(header).body(response);
     }
 
-    @GetMapping("/courses")
-    public ResponseEntity<List<CourseResponse>> categoryCourses(@RequestParam int categoryId)
+    @GetMapping("{categoryTitle}/courses")
+    public ResponseEntity<List<CourseResponse>> categoryCourses(@PathVariable String categoryTitle)
     {
-        List<CourseResponse> response = categoryService.getCoursesByCategory(categoryId);
+        String decodedCategoryTitle = URLDecoder.decode(categoryTitle, StandardCharsets.UTF_8);
+
+        List<CourseResponse> response = categoryService.getCoursesByCategory(decodedCategoryTitle);
         HttpHeaders header= new HttpHeaders();
         header.set("Content-Type","application/json");
         if(!response.isEmpty())
@@ -60,11 +64,12 @@ public class CategoryController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).body(response);
     }
 
-    @PutMapping("/edit/{categoryId}")
+    @PutMapping("/{categoryTitle}/edit")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CategoryResponse> modifyCategory(@Valid @RequestBody CategoryRequest request,@PathVariable int categoryId)
+    public ResponseEntity<CategoryResponse> modifyCategory(@Valid @RequestBody CategoryRequest request,@PathVariable String categoryTitle)
     {
-        CategoryResponse response = categoryService.editCategory(request,categoryId);
+        String decodedCategoryTitle = URLDecoder.decode(categoryTitle, StandardCharsets.UTF_8);
+        CategoryResponse response = categoryService.updateCategory(request,decodedCategoryTitle);
         HttpHeaders header = new HttpHeaders();
         header.set("Content-Type","application/json");
         if(!response.isError())
@@ -73,11 +78,12 @@ public class CategoryController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).body(response);
     }
 
-    @DeleteMapping("/remove/{id}")
+    @DeleteMapping("/{courseTitle}/remove")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CategoryResponse> deleteCategory(@RequestParam int id)
+    public ResponseEntity<CategoryResponse> deleteCategory(@PathVariable String courseTitle)
     {
-        CategoryResponse response = categoryService.removeCategory(id);
+        String decodedCourseTitle = URLDecoder.decode(courseTitle,StandardCharsets.UTF_8);
+        CategoryResponse response = categoryService.removeCategory(decodedCourseTitle);
         HttpHeaders header= new HttpHeaders();
         header.set("Content-Type","application/json");
         if(!response.isError())

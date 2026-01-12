@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ContentDetails {
 
-    private int id;
+    private Integer id;
     private String title;
-    private int courseId;
+    private Integer courseId;
     private String description;
     private String contentUrl;
     private String contentType;

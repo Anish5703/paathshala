@@ -6,11 +6,16 @@ import com.paathshala.dto.category.CategoryResponse;
 import com.paathshala.dto.course.CourseResponse;
 import com.paathshala.entity.Category;
 import com.paathshala.entity.Course;
+import com.paathshala.exception.category.*;
+import com.paathshala.exception.course.CourseNotFoundException;
 import com.paathshala.mapper.CategoryMapper;
 import com.paathshala.mapper.CourseMapper;
+import com.paathshala.model.ErrorType;
 import com.paathshala.repository.CategoryRepo;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -18,30 +23,43 @@ import java.util.*;
 @Service
 public class CategoryService {
 
-    @Autowired
-    private CategoryRepo categoryRepo;
+    private final CategoryRepo categoryRepo;
 
-    @Autowired
-    private CategoryMapper categoryMapper;
 
-    @Autowired
-    private CourseMapper courseMapper;
+    private final CategoryMapper categoryMapper;
+
+    private final CourseMapper courseMapper;
+
+    private static final Logger logger = LoggerFactory.getLogger(CategoryService.class);
+
+    public CategoryService(CategoryRepo categoryRepo,CategoryMapper categoryMapper,CourseMapper courseMapper)
+    {
+        this.categoryRepo= categoryRepo;
+        this.categoryMapper = categoryMapper;
+        this.courseMapper = courseMapper;
+
+    }
 
     public List<CategoryDetails> getAllCategory()
     {
         List<Category>  categories = categoryRepo.findAll();
         if(categories.isEmpty())
-            return Collections.emptyList();
+            throw new CategoryNotFoundException("Failed to retrieve categories : No category found"
+            );
       return categoryMapper.toCategoryDetailsList(categories);
     }
 
-    @Transactional
-    public List<CourseResponse> getCoursesByCategory(int categoryId)
+
+    public List<CourseResponse> getCoursesByCategory(String categoryTitle)
     {
-        Optional<Category> category = categoryRepo.findById(categoryId);
-        List<Course> courses = category.get().getCourses();
+        Category category = categoryRepo.findByTitle(categoryTitle)
+                .orElseThrow(
+                        () -> new CategoryNotFoundException(String.format("Failed to retrieve courses : Category '%s' not found",categoryTitle))
+                );
+
+        List<Course> courses = category.getCourses();
         if(courses.isEmpty())
-            return Collections.emptyList();
+            throw new CourseNotFoundException(String.format("Failed to retrieve courses : Category '%s' has no courses",categoryTitle));
         else
             return courseMapper.toCourseResponseList(courses);
     }
@@ -49,67 +67,82 @@ public class CategoryService {
     @Transactional
     public CategoryResponse addCategory(CategoryRequest request)
     {
-        Optional<Category> category = categoryRepo.findByTitle(request.getTitle());
+        boolean isDuplicateExists = categoryRepo.existsByTitle(request.getTitle());
+        if(isDuplicateExists)
+            throw new CategoryDuplicateFoundException(String.format("Failed to add category : Category '%s' already exists",request.getTitle()));
         Map<String,Object> message = new HashMap<>();
-        if(category.isPresent())
-        {
-            message.put("status","Category already exists");
-            return categoryMapper.toCategoryResponse(category.get(),true,message);
+        try {
+            Category savedCategory = categoryRepo.save(categoryMapper.toEntity(request));
+            message.put("status", "Category added");
+            return categoryMapper.toCategoryResponse(savedCategory, false, message);
         }
-        Category savedCategory = categoryRepo.save( categoryMapper.toEntity(request) );
-        message.put("status","Category added");
-        return categoryMapper.toCategoryResponse(savedCategory,false,message);
+        catch(DataAccessException ex)
+        {
+           logger.error(ErrorType.CATEGORY_NOT_SAVED.toString(),ex);
+           throw new CategorySaveFailedException(String.format("Failed to add category '%s' : Database Error",request.getTitle()));
+        }
     }
 
     @Transactional
-    public CategoryResponse editCategory(CategoryRequest request,int categoryId)
+    public CategoryResponse updateCategory(CategoryRequest request, String categoryTitle)
     {
         if (request==null)
             throw new IllegalArgumentException("Category cannot be null");
-        Optional<Category> category = categoryRepo.findById(categoryId);
+        Category category = categoryRepo.findByTitle(categoryTitle)
+                .orElseThrow(
+                        () -> new CategoryNotFoundException(String.format("Failed to update category : Category '%s' not found",categoryTitle))
+                );
         Map<String,Object> message = new HashMap<>();
-        if(category.isEmpty())
-        {
-           message.put("status","No Category found with id:"+categoryId);
-           category.get().setId(categoryId);
-           return categoryMapper.toCategoryResponse(category.get(),true,message);
-        }
+        // set the fields
         Category modifiedCategory = categoryMapper.toEntity(request);
-        Optional<Category> savedCategory = categoryRepo.findByTitle(request.getTitle());
+        modifiedCategory.setId(category.getId());
+        modifiedCategory.setCourses(category.getCourses());
+        modifiedCategory.setCreatedAt(category.getCreatedAt());
 
-        if(savedCategory.isPresent() && savedCategory.get().getId() != categoryId)
+
+        if(!request.getTitle().equals(categoryTitle))
         {
-            message.put("status","Category title duplication");
-            return categoryMapper.toCategoryResponse(modifiedCategory,true,message);
+            if(categoryRepo.existsByTitle(request.getTitle()))
+                throw new CategoryDuplicateFoundException(
+                        String.format("Failed to update category '%s' : Category '%s' already exists",categoryTitle,request.getTitle())
+                );
         }
-        Category updatedCategory = categoryRepo.save(modifiedCategory);
-        message.put("status","Modified successfully");
-        return categoryMapper.toCategoryResponse(updatedCategory,false,message);
+        try {
+            Category updatedCategory = categoryRepo.save(modifiedCategory);
+            message.put("status", "Modified successfully");
+            return categoryMapper.toCategoryResponse(updatedCategory, false, message);
+        }
+        catch(DataAccessException ex)
+        {
+            logger.error(ErrorType.CATEGORY_NOT_UPDATED.toString(),ex);
+            throw new CategoryUpdateFailedException(String.format("Failed to update category '%s' : Database Error",categoryTitle));
+        }
 
     }
 
     @Transactional
-    public CategoryResponse removeCategory(int categoryId)
+    public CategoryResponse removeCategory(String categoryTitle)
     {
-        if(categoryId<0)
+        if(categoryTitle.isEmpty())
             throw new IllegalArgumentException("Category cannot be null");
-        Optional<Category> category = categoryRepo.findById(categoryId);
+        Category category = categoryRepo.findByTitle(categoryTitle)
+                .orElseThrow(
+                        () -> new CategoryNotFoundException(String.format("Failed to delete category : Category '%s' not found",categoryTitle))
+                );
         Map<String,Object> message = new HashMap<>();
-        if(category.isEmpty())
-        {
-            message.put("status","No category found");
-            Category dummy = new Category();
-            dummy.setId(categoryId);
-            return categoryMapper.toCategoryResponse(dummy,true,message);
+
+        if(!category.getCourses().isEmpty())
+            throw new CategoryDeleteFailedException(String.format("Failed to delete category : Category '%s' has courses",categoryTitle));
+        try {
+            categoryRepo.delete(category);
+            message.put("status", "Category removed");
+            return categoryMapper.toCategoryResponse(category, false, message);
         }
-        if(!category.get().getCourses().isEmpty())
+        catch (DataAccessException ex)
         {
-            message.put("status","Cannot delete the category since it has courses");
-            return categoryMapper.toCategoryResponse(category.get(),true,message);
+            logger.error(ErrorType.COURSE_NOT_DELETED.toString(),ex);
+            throw new CategoryDeleteFailedException("Failed to delete category : Database error");
         }
-        categoryRepo.delete(category.get());
-        message.put("status","Category removed");
-        return categoryMapper.toCategoryResponse(category.get(),false,message);
     }
 
     public boolean isExists(String categoryTitle)

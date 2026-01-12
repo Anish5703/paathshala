@@ -9,5 +9,6 @@ public interface CourseRepo extends JpaRepository<Course,Integer> {
 
     Optional<Course> findById(int id);
     Optional<Course> findByTitle(String title);
+    boolean existsByTitle(String title);
 
 }
