@@ -1,5 +1,6 @@
 package com.paathshala.service;
 
+import com.paathshala.dto.ApiMessage;
 import com.paathshala.dto.content.Note.NoteDetails;
 import com.paathshala.dto.content.Note.NoteRequest;
 import com.paathshala.dto.content.Note.NoteResponse;
@@ -59,7 +60,6 @@ public class ContentService {
                 .orElseThrow(
                         () -> new CourseNotFoundException(String.format("Course '%s' not found",courseTitle))
                 );
-        Map<String,Object> message = new HashMap<>();
 
         /*
         Find notes linked to the course
@@ -88,10 +88,11 @@ public class ContentService {
          else throw an exception
          */
         try {
+            ApiMessage message = new ApiMessage();
             note = noteRepo.save(note);
-            message.put("status", "Note added");
-            message.put("details", "New note " + note.getTitle() + " added to the course " + courseTitle);
-            return contentMapper.toNoteResponseSuccess(note, false, message);
+            message.setStatus("Note added");
+            message.setDetails(String.format("Note '%s' created on the course '%s' successfully",noteRequest.getTitle(),courseTitle));
+            return contentMapper.toNoteResponseSuccess(note, message);
         }
         catch(DataAccessException ex)
         {
@@ -127,7 +128,6 @@ public class ContentService {
                 .orElseThrow(
                         () -> new CourseNotFoundException(String.format("Course '%s' not found",courseTitle))
                 );
-        Map<String,Object> message = new HashMap<>();
 
         /*
         Retrieve Note linked to the course
@@ -139,9 +139,10 @@ public class ContentService {
                 .orElseThrow(
                         () -> new NoteNotFoundException(String.format("Note '%s' not found om Course '%s'",noteTitle,courseTitle))
                 );
-
-            message.put("status","Note found");
-            return contentMapper.toNoteResponseSuccess(note,false,message);
+            ApiMessage message = new ApiMessage();
+            message.setStatus("Note found");
+            message.setDetails(String.format("Note '%s' found on course '%s' successfully",noteTitle,courseTitle));
+            return contentMapper.toNoteResponseSuccess(note,message);
 
     }
 
@@ -150,13 +151,12 @@ public class ContentService {
 
     {
         /*
-        Retrieve Course object from database using coursetitle
+        Retrieve Course object from database using course title
         throw exception if not found
         */
         Course course =  courseRepo.findByTitle(courseTitle).orElseThrow(
                 () -> new CourseNotFoundException(String.format("Update Note '%s' failed : Course '%s' not found",noteTitle,courseTitle))
-        );;
-        Map<String,Object> message = new HashMap<>();
+        );
 
         /*
          Retrieve Note object using note title
@@ -196,8 +196,10 @@ public class ContentService {
         }
         try {
             Note updatedNote = noteRepo.save(modifiedNote);
-            message.put("status", "Note updated");
-            return contentMapper.toNoteResponseSuccess(updatedNote, false, message);
+            ApiMessage message = new ApiMessage();
+            message.setStatus("Note updated");
+            message.setDetails(String.format("Note '%s' updated on course '%s' successfully",noteTitle,courseTitle));
+            return contentMapper.toNoteResponseSuccess(updatedNote, message);
         }
         catch(DataAccessException ex)
         {
@@ -212,14 +214,13 @@ public class ContentService {
     {
             /* Retrieve Course from title
             check if course exists
-            if not found throw an exception
+            not found throw an exception
              */
             Course course = courseRepo.findByTitle(courseTitle)
                     .orElseThrow(
                             () -> new CourseNotFoundException(String.format("Course '%s' not found : Delete note '%s' failed",courseTitle,noteTitle))
                     );
 
-            Map<String, Object> message = new HashMap<>();
             /* Retrieve Note from title and course
             if not found throw an exception
             if found delete the note from repository
@@ -230,8 +231,10 @@ public class ContentService {
                     );
             try{
             noteRepo.deleteById(note.getId());
-            message.put("status", "Note deleted");
-            return contentMapper.toNoteResponseSuccess(note, false, message);
+            ApiMessage message = new ApiMessage();
+            message.setStatus("Note removed");
+            message.setDetails(String.format("Note '%s' deleted from course '%s' successfully",noteTitle,courseTitle));
+            return contentMapper.toNoteResponseSuccess(note,message);
         }
         catch(DataAccessException ex)
         {

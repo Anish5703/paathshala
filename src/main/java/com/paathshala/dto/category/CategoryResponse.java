@@ -1,5 +1,6 @@
 package com.paathshala.dto.category;
 
+import com.paathshala.dto.ApiMessage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,11 +18,8 @@ public class CategoryResponse {
     private int id;
     private String title;
     private String description;
-    private Map<String,Object> message;
-    private boolean isError;
-
-    public CategoryResponse(Map<String,Object> message, boolean isError) {
-        this.message = message;
-        this.isError = isError;
+    private ApiMessage message;
+    public CategoryResponse(ApiMessage message) {
+       
     }
 }

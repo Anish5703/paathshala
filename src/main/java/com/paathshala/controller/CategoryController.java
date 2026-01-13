@@ -30,10 +30,7 @@ public class CategoryController {
         List<CategoryDetails> response = categoryService.getAllCategory();
         HttpHeaders header= new HttpHeaders();
         header.set("Content-Type","application/json");
-        if(!response.isEmpty())
-            return ResponseEntity.status(HttpStatus.OK).headers(header).body(response);
-        else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).headers(header).body(response);
+        return ResponseEntity.status(HttpStatus.OK).headers(header).body(response);
     }
 
     @GetMapping("{categoryTitle}/courses")
@@ -44,10 +41,7 @@ public class CategoryController {
         List<CourseResponse> response = categoryService.getCoursesByCategory(decodedCategoryTitle);
         HttpHeaders header= new HttpHeaders();
         header.set("Content-Type","application/json");
-        if(!response.isEmpty())
-            return ResponseEntity.status(HttpStatus.OK).headers(header).body(response);
-        else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).headers(header).body(response);
+        return ResponseEntity.status(HttpStatus.OK).headers(header).body(response);
 
     }
 
@@ -58,10 +52,8 @@ public class CategoryController {
         CategoryResponse response = categoryService.addCategory(request);
         HttpHeaders header= new HttpHeaders();
         header.set("Content-Type","application/json");
-        if(!response.isError())
-            return ResponseEntity.status(HttpStatus.CREATED).headers(header).body(response);
-        else
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).headers(header).body(response);
+
     }
 
     @PutMapping("/{categoryTitle}/edit")
@@ -72,10 +64,8 @@ public class CategoryController {
         CategoryResponse response = categoryService.updateCategory(request,decodedCategoryTitle);
         HttpHeaders header = new HttpHeaders();
         header.set("Content-Type","application/json");
-        if(!response.isError())
             return ResponseEntity.status(HttpStatus.ACCEPTED).headers(header).body(response);
-        else
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).body(response);
+
     }
 
     @DeleteMapping("/{courseTitle}/remove")
@@ -86,10 +76,7 @@ public class CategoryController {
         CategoryResponse response = categoryService.removeCategory(decodedCourseTitle);
         HttpHeaders header= new HttpHeaders();
         header.set("Content-Type","application/json");
-        if(!response.isError())
             return ResponseEntity.status(HttpStatus.ACCEPTED).headers(header).body(response);
-        else
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).body(response);
 
     }
 

@@ -24,5 +24,6 @@ public enum ErrorType {
 
     DATABASE_ERROR,
     USER_NOT_FOUND,
-    Authorization_FAILED
+    Authorization_FAILED,
+    READ_WRITE_FAILED
 }

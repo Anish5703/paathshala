@@ -1,5 +1,6 @@
 package com.paathshala.service;
 
+import com.paathshala.dto.ApiMessage;
 import com.paathshala.dto.category.CategoryDetails;
 import com.paathshala.dto.category.CategoryRequest;
 import com.paathshala.dto.category.CategoryResponse;
@@ -70,11 +71,13 @@ public class CategoryService {
         boolean isDuplicateExists = categoryRepo.existsByTitle(request.getTitle());
         if(isDuplicateExists)
             throw new CategoryDuplicateFoundException(String.format("Failed to add category : Category '%s' already exists",request.getTitle()));
-        Map<String,Object> message = new HashMap<>();
         try {
             Category savedCategory = categoryRepo.save(categoryMapper.toEntity(request));
-            message.put("status", "Category added");
-            return categoryMapper.toCategoryResponse(savedCategory, false, message);
+            ApiMessage message = new ApiMessage();
+            message.setStatus("Category added");
+            message.setDetails(String.format("Category '%s' created successfully",request.getTitle()));
+
+            return categoryMapper.toCategoryResponse(savedCategory ,message);
         }
         catch(DataAccessException ex)
         {
@@ -92,7 +95,6 @@ public class CategoryService {
                 .orElseThrow(
                         () -> new CategoryNotFoundException(String.format("Failed to update category : Category '%s' not found",categoryTitle))
                 );
-        Map<String,Object> message = new HashMap<>();
         // set the fields
         Category modifiedCategory = categoryMapper.toEntity(request);
         modifiedCategory.setId(category.getId());
@@ -109,8 +111,10 @@ public class CategoryService {
         }
         try {
             Category updatedCategory = categoryRepo.save(modifiedCategory);
-            message.put("status", "Modified successfully");
-            return categoryMapper.toCategoryResponse(updatedCategory, false, message);
+            ApiMessage message = new ApiMessage();
+            message.setStatus("Category Updated");
+            message.setDetails(String.format("Category '%s' updated to '%s' successfully",categoryTitle,request.getTitle()));
+            return categoryMapper.toCategoryResponse(updatedCategory, message);
         }
         catch(DataAccessException ex)
         {
@@ -129,14 +133,15 @@ public class CategoryService {
                 .orElseThrow(
                         () -> new CategoryNotFoundException(String.format("Failed to delete category : Category '%s' not found",categoryTitle))
                 );
-        Map<String,Object> message = new HashMap<>();
 
         if(!category.getCourses().isEmpty())
             throw new CategoryDeleteFailedException(String.format("Failed to delete category : Category '%s' has courses",categoryTitle));
         try {
             categoryRepo.delete(category);
-            message.put("status", "Category removed");
-            return categoryMapper.toCategoryResponse(category, false, message);
+            ApiMessage message = new ApiMessage();
+            message.setStatus("Category removed");
+            message.setDetails(String.format("Category '%s' deleted successfully",categoryTitle));
+            return categoryMapper.toCategoryResponse(category,message);
         }
         catch (DataAccessException ex)
         {

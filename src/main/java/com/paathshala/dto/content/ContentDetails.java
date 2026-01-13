@@ -13,7 +13,7 @@ public class ContentDetails {
 
     private Integer id;
     private String title;
-    private Integer courseId;
+    private String courseTitle;
     private String description;
     private String contentUrl;
     private String contentType;

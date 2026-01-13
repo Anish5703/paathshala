@@ -42,10 +42,7 @@ public class CourseController {
       CourseResponse response = courseService.addCourse(request);
       HttpHeaders header = new HttpHeaders();
       header.set("Content-Type","application/json");
-      if(!response.isError())
-          return ResponseEntity.status(HttpStatus.CREATED).headers(header).body(response);
-      else
-        return  ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).body(response);
+      return ResponseEntity.status(HttpStatus.CREATED).headers(header).body(response);
     }
 
     @PutMapping("/{courseTitle}/update")
@@ -56,10 +53,8 @@ public class CourseController {
         CourseResponse response = courseService.updateCourse(request,decodedCourseTitle);
         HttpHeaders header = new HttpHeaders();
         header.set("Content-Type","application/json");
-        if(!response.isError())
-            return ResponseEntity.status(HttpStatus.OK).headers(header).body(response);
-        else
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).body(response);
+        return ResponseEntity.status(HttpStatus.OK).headers(header).body(response);
+
 
     }
 
@@ -71,9 +66,6 @@ public class CourseController {
         CourseResponse response = courseService.removeCourse(decodedCourseTitle);
         HttpHeaders header = new HttpHeaders();
         header.set("Content-Type","application/json");
-        if(!response.isError())
             return ResponseEntity.status(HttpStatus.OK).headers(header).body(response);
-        else
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).body(response);
     }
 }

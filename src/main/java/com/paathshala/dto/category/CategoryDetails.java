@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class CategoryDetails {
 
-    private int id;
     private String title;
     private String description;
 }

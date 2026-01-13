@@ -9,8 +9,8 @@ public class VideoDetails extends ContentDetails {
 
     private Integer contentLength; //in seconds
 
-    public VideoDetails(int id, String title, int courseId, String description, String contentUrl, String contentType, Long contentSize, LocalDateTime createdAt, Integer contentLength) {
-        super(id, title, courseId, description, contentUrl, contentType, contentSize, createdAt);
+    public VideoDetails(int id, String title,String courseTitle, String description, String contentUrl, String contentType, Long contentSize, LocalDateTime createdAt, Integer contentLength) {
+        super(id, title, courseTitle, description, contentUrl, contentType, contentSize, createdAt);
         this.contentLength = contentLength;
     }
 

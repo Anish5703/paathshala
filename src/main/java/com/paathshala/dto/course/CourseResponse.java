@@ -1,13 +1,11 @@
 package com.paathshala.dto.course;
 
-import com.paathshala.dto.category.CategoryResponse;
+import com.paathshala.dto.ApiMessage;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Map;
 
 @Data
 @Builder
@@ -18,29 +16,27 @@ public class CourseResponse {
     // Optional: Include the data if successful
     private int id;
     private String title;
-    private CategoryResponse category;
+    private String categoryTitle;
     private double price;
     private String description;
     @Schema(name="idPublished")
     private boolean isPublished;
     private int estimatedTime;
 
-    private Map<String,Object> message;
-    private boolean isError;
+    private ApiMessage message;
 
 
     // Constructor for quick error responses
-    public CourseResponse(String title,Map<String,Object> message, boolean isError) {
+    public CourseResponse(String title,ApiMessage message, boolean isError) {
         this.title = title;
         this.message = message;
-        this.isError = isError;
 
     }
 
-    public CourseResponse(int id, String title, CategoryResponse category, double price, String description, boolean isPublished, int estimatedTime) {
+    public CourseResponse(int id, String title, String categoryTitle, double price, String description, boolean isPublished, int estimatedTime) {
         this.id = id;
         this.title = title;
-        this.category = category;
+        this.categoryTitle = categoryTitle;
         this.price = price;
         this.description = description;
         this.isPublished = isPublished;

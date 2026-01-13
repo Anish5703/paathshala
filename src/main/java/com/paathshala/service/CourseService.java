@@ -1,5 +1,6 @@
 package com.paathshala.service;
 
+import com.paathshala.dto.ApiMessage;
 import com.paathshala.dto.course.CourseDetails;
 import com.paathshala.dto.course.CourseRequest;
 import com.paathshala.dto.course.CourseResponse;
@@ -61,7 +62,6 @@ public class CourseService {
        if(courseRepo.existsByTitle(request.getTitle()))
            throw new CourseDuplicateFoundException(String.format("Failed to save course : Course '%s' already exists",request.getTitle()));
 
-        Map<String,Object> message = new HashMap<>();
 
        Course course = courseMapper.toEntity(request);
         //set category to the course
@@ -69,8 +69,10 @@ public class CourseService {
 
         try {
             Course savedCourse = courseRepo.save(course);
-            message.put("status", "Course added");
-            return courseMapper.toCourseResponseSuccess(savedCourse, false, message);
+            ApiMessage message = new ApiMessage();
+            message.setStatus("Course added");
+            message.setDetails(String.format("Course '%s' created successfully",request.getTitle()));
+            return courseMapper.toCourseResponseSuccess(savedCourse,message);
         }
         catch(DataAccessException ex)
         {
@@ -89,13 +91,12 @@ public class CourseService {
                 .orElseThrow(
                         () -> new CourseNotFoundException(String.format("Failed to update course : Course '%s' not found",courseTitle))
                 );
-        Map<String,Object> message = new HashMap<>();
 
         Course modifiedCourse = courseMapper.toEntity(request);
         //set new category to the course
         modifiedCourse.setCategory(findCategory(request.getCategoryId()));
 
-       if(request.getTitle() != courseTitle)
+       if(!request.getTitle().equals(courseTitle))
        {
           boolean isTitleDuplicate = courseRepo.existsByTitle(request.getTitle());
           if(isTitleDuplicate)
@@ -103,8 +104,10 @@ public class CourseService {
        }
        try {
            Course updatedCourse = courseRepo.save(modifiedCourse);
-           message.put("status", "Modified successfully");
-           return courseMapper.toCourseResponseSuccess(updatedCourse, false, message);
+           ApiMessage message = new ApiMessage();
+           message.setStatus("Course updated");
+           message.setDetails(String.format("Course '%s' updated successfully",courseTitle));
+           return courseMapper.toCourseResponseSuccess(updatedCourse, message);
        }
        catch(DataAccessException ex)
        {
@@ -122,11 +125,13 @@ public class CourseService {
                 .orElseThrow(
                         () -> new CourseNotFoundException(String.format("Failed to delete course : Course '%s' not found",courseTitle))
                 ) ;
-        Map<String,Object> message = new HashMap<>();
        try {
            courseRepo.deleteById(course.getId());
-           message.put("status", "Course deleted");
-           return courseMapper.toCourseResponseSuccess(course, false, message);
+           ApiMessage message = new ApiMessage();
+
+           message.setStatus("Course removed");
+           message.setStatus(String.format("Course '%s' deleted successfully",courseTitle));
+           return courseMapper.toCourseResponseSuccess(course,message);
        }
        catch(DataAccessException ex)
        {

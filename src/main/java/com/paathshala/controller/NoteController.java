@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/{courseTitle}/note")
+@RequestMapping("api/course/{courseTitle}/note")
 public class NoteController {
 
     private final ContentService contentService;
@@ -31,16 +31,14 @@ public class NoteController {
 @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<NoteResponse> createNote(@Valid @RequestBody NoteRequest request,
                                                    @PathVariable String courseTitle,
-                                                   MultipartFile file)
+                                                   @RequestPart("file") MultipartFile file)
 {
     String decodedCourseTitle = URLDecoder.decode(courseTitle,StandardCharsets.UTF_8);
-    NoteResponse response = contentService.addNote(request,courseTitle,file);
+    NoteResponse response = contentService.addNote(request,decodedCourseTitle,file);
     HttpHeaders header = new HttpHeaders();
     header.set("Content-Type","application/json");
-    if(!response.isError())
-        return ResponseEntity.status(HttpStatus.CREATED).headers(header).body(response);
-    else
-        return  ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).body(response);
+    return ResponseEntity.status(HttpStatus.CREATED).headers(header).body(response);
+
 }
 @GetMapping("/{contentTitle}")
     public ResponseEntity<NoteResponse> getNote(@PathVariable String contentTitle,
@@ -51,10 +49,8 @@ public class NoteController {
     NoteResponse response = contentService.getNoteByTitle(decodedContentTitle,decodedCourseTitle);
     HttpHeaders header = new HttpHeaders();
     header.set("Content-Type","application/json");
-    if(!response.isError())
-        return ResponseEntity.status(HttpStatus.OK).headers(header).body(response);
-    else
-        return  ResponseEntity.status(HttpStatus.NOT_FOUND).headers(header).body(response);
+    return ResponseEntity.status(HttpStatus.OK).headers(header).body(response);
+
 }
 @GetMapping("/all")
     public ResponseEntity<List<NoteDetails>> getNotes(@PathVariable String courseTitle)
@@ -63,16 +59,14 @@ public class NoteController {
     List<NoteDetails> notes = contentService.getNoteList(decodeCourseTitle);
     HttpHeaders header = new HttpHeaders();
     header.set("Content-Type","application/json");
-    if(!notes.isEmpty())
         return ResponseEntity.status(HttpStatus.OK).headers(header).body(notes);
-    else
-        return  ResponseEntity.status(HttpStatus.NOT_FOUND).headers(header).body(notes);
 }
+@PreAuthorize("hasRole('ADMIN')")
 @PutMapping("/{contentTitle}/edit")
     public ResponseEntity<NoteResponse> modifyNote(@PathVariable String contentTitle,
                                                    @PathVariable String courseTitle,
                                                    @Valid @RequestBody NoteRequest noteRequest,
-                                                    MultipartFile file)
+                                                   @RequestPart("file") MultipartFile file)
 
 {
     String decodedContentTitle = URLDecoder.decode(contentTitle, StandardCharsets.UTF_8);
@@ -80,12 +74,10 @@ public class NoteController {
     NoteResponse response = contentService.updateNote(noteRequest,decodedContentTitle,decodedCourseTitle,file);
     HttpHeaders header = new HttpHeaders();
     header.set("Content-Type","application/json");
-    if(!response.isError())
         return ResponseEntity.status(HttpStatus.OK).headers(header).body(response);
-    else
-        return  ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).body(response);
-}
 
+}
+@PreAuthorize("hasRole('ADMIN')")
 @DeleteMapping("/{contentTitle}/remove")
     public ResponseEntity<NoteResponse> deleteNote(@PathVariable String contentTitle,
                                                    @PathVariable String courseTitle)
@@ -95,10 +87,8 @@ public class NoteController {
     NoteResponse response = contentService.removeNote(decodedCourseTitle,decodedContentTitle);
     HttpHeaders header = new HttpHeaders();
     header.set("Content-Type","application/json");
-    if(!response.isError())
         return ResponseEntity.status(HttpStatus.ACCEPTED).headers(header).body(response);
-    else
-        return  ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).body(response);
+
 
 }
 

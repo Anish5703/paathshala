@@ -1,5 +1,6 @@
 package com.paathshala.mapper;
 
+import com.paathshala.dto.ApiMessage;
 import com.paathshala.dto.content.Note.NoteDetails;
 import com.paathshala.dto.content.Note.NoteRequest;
 import com.paathshala.dto.content.Note.NoteResponse;
@@ -13,12 +14,6 @@ import java.util.Map;
 @Component
 public class ContentMapper {
 
-    private final CourseMapper courseMapper;
-
-    public ContentMapper(CourseMapper courseMapper)
-    {
-        this.courseMapper=courseMapper;
-    }
 
 
     public Note toNoteEntity(NoteRequest request)
@@ -29,25 +24,23 @@ public class ContentMapper {
         return note;
     }
 
-    public NoteResponse toNoteResponseError(String noteTitle, boolean isError, Map<String,Object> message)
+    public NoteResponse toNoteResponseError(String noteTitle, ApiMessage message)
     {
         NoteResponse noteResponse = new NoteResponse();
         noteResponse.setTitle(noteTitle);
-        noteResponse.setError(isError);
         noteResponse.setMessage(message);
         return noteResponse;
     }
-    public NoteResponse toNoteResponseSuccess(Note note,boolean isError,Map<String,Object> message)
+    public NoteResponse toNoteResponseSuccess(Note note,ApiMessage message)
     {
         NoteResponse response = new NoteResponse();
         response.setId(note.getId());
         response.setTitle(note.getTitle());
         response.setDescription(note.getDescription());
-        response.setCourse(courseMapper.toCourseDetails(note.getCourse()));
+        response.setCourseTitle(note.getCourse().getTitle());
         response.setContentUrl(note.getContentUrl());
         response.setContentType(note.getContentType());
         response.setContentSize(note.getContentSize());
-        response.setError(isError);
         response.setMessage(message);
         return response;
 

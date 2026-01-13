@@ -1,5 +1,6 @@
 package com.paathshala.mapper;
 
+import com.paathshala.dto.ApiMessage;
 import com.paathshala.dto.category.CategoryDetails;
 import com.paathshala.dto.category.CategoryRequest;
 import com.paathshala.dto.category.CategoryResponse;
@@ -13,14 +14,13 @@ import java.util.Map;
 @Component
 public class CategoryMapper {
 
-    public CategoryResponse toCategoryResponse(Category category,boolean error , Map<String,Object> message)
+    public CategoryResponse toCategoryResponse(Category category, ApiMessage message)
 
     {
         CategoryResponse response = new CategoryResponse();
         response.setId(category.getId());
         response.setTitle(category.getTitle());
         response.setDescription(category.getDescription());
-        response.setError(error);
         response.setMessage(message);
         return response;
     }
@@ -36,19 +36,9 @@ public class CategoryMapper {
     public CategoryDetails toCategoryDetails(Category category)
     {
         CategoryDetails details = new CategoryDetails();
-        details.setId(category.getId());
         details.setTitle(category.getTitle());
         details.setDescription(category.getDescription());
         return details;
-    }
-    public List<CategoryResponse> toCategoryResponseList(List<Category> categories)
-    {
-        List<CategoryResponse> response = new ArrayList<>();
-        for(Category category : categories)
-        {
-            response.add(toCategoryResponse(category));
-        }
-        return response;
     }
 
   public List<CategoryDetails> toCategoryDetailsList(List<Category> categories)

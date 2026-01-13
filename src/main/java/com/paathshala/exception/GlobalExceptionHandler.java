@@ -1,7 +1,5 @@
 package com.paathshala.exception;
 
-import com.paathshala.dto.category.CategoryResponse;
-import com.paathshala.dto.content.Note.NoteResponse;
 import com.paathshala.dto.ErrorResponse;
 import com.paathshala.exception.category.*;
 import com.paathshala.exception.course.CourseDeleteFailedException;
@@ -18,44 +16,28 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.io.IOException;
-import java.util.Map;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    /**
-     * Handles database-related exceptions
-     */
+
     @ExceptionHandler(DataAccessException.class)
-    public ResponseEntity<CategoryResponse> handleDatabaseError(DataAccessException ex) {
+    public ResponseEntity<ErrorResponse> handleDatabaseError(DataAccessException ex) {
 
         log.error("Database error encountered: {}", ex.getMessage(), ex);
 
-        CategoryResponse resp = new CategoryResponse();
-        resp.setError(true);
-        resp.setMessage(Map.of(
-                "status", "Database error",
-                "detail", "The system is currently unable to process your request. Please try again later."
-        ));
-
+        ErrorResponse resp = new ErrorResponse(ErrorType.DATABASE_ERROR,"The system is currently unable to process your request. Please try again later");
         return new ResponseEntity<>(resp, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
-    /**
-     * Handles file & IO related exceptions
-     */
+
     @ExceptionHandler(IOException.class)
-    public ResponseEntity<CategoryResponse> handleIOException(IOException ex) {
+    public ResponseEntity<ErrorResponse> handleIOException(IOException ex) {
 
         log.error("IO error encountered: {}", ex.getMessage(), ex);
 
-        CategoryResponse resp = new CategoryResponse();
-        resp.setError(true);
-        resp.setMessage(Map.of(
-                "status", "File error",
-                "detail", "File processing failed. Please try again later."
-        ));
+        ErrorResponse resp = new ErrorResponse(ErrorType.READ_WRITE_FAILED,"Something went wrong");
 
         return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
     }

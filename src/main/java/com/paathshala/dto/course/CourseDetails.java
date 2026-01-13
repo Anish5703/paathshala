@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CourseDetails {
-    private int id;
     private String title;
-    private CategoryDetails category;
+    private String categoryName;
     private double price;
     private String description;
     private boolean isPublished;

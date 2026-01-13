@@ -1,55 +1,37 @@
 package com.paathshala.mapper;
 
-import com.paathshala.dto.category.CategoryDetails;
-import com.paathshala.dto.category.CategoryResponse;
+import com.paathshala.dto.ApiMessage;
 import com.paathshala.dto.course.CourseDetails;
 import com.paathshala.dto.course.CourseRequest;
 import com.paathshala.dto.course.CourseResponse;
 import com.paathshala.entity.Course;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class CourseMapper {
 
-    @Autowired
-    CategoryMapper categoryMapper;
 
-    public CourseResponse toCourseResponseError(Course course, boolean error, Map<String,Object> message)
+    public CourseResponse toCourseResponseSuccess(Course course,ApiMessage message)
     {
         CourseResponse response = new CourseResponse();
         response.setId(course.getId());
         response.setTitle(course.getTitle());
-        response.setError(error);
-        response.setMessage(message);
-       return response;
-    }
-    public CourseResponse toCourseResponseSuccess(Course course,boolean error,Map<String,Object> message)
-    {
-        CourseResponse response = new CourseResponse();
-        response.setId(course.getId());
-        response.setTitle(course.getTitle());
-        CategoryResponse categoryResponse = categoryMapper.toCategoryResponse(course.getCategory());
-        response.setCategory(categoryResponse);
+        response.setCategoryTitle(course.getCategory().getTitle());
         response.setPrice(course.getPrice());
         response.setDescription(course.getDescription());
         response.setPublished(course.isPublished());
         response.setEstimatedTime(course.getEstimatedTime());
-        response.setError(error);
         response.setMessage(message);
         return response;
     }
     public CourseResponse toCourseResponse(Course course)
     {
-        CategoryResponse categoryResponse = categoryMapper.toCategoryResponse(course.getCategory());
         return new CourseResponse(
                 course.getId(),
                 course.getTitle(),
-                categoryResponse,
+                course.getCategory().getTitle(),
                 course.getPrice(),
                 course.getDescription(),
                 course.isPublished(),
@@ -58,11 +40,9 @@ public class CourseMapper {
     }
     public CourseDetails toCourseDetails(Course course)
     {
-        CategoryDetails categoryDetails = categoryMapper.toCategoryDetails(course.getCategory());
         return new CourseDetails(
-                course.getId(),
                 course.getTitle(),
-                categoryDetails,
+                course.getCategory().getTitle(),
                 course.getPrice(),
                 course.getDescription(),
                 course.isPublished(),
