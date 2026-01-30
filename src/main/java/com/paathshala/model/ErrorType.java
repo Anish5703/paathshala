@@ -3,6 +3,8 @@ package com.paathshala.model;
 public enum ErrorType {
     ILLEGAL_ARGUMENTS,
     FILE_UPLOAD_FAILED,
+    JSON_PROCESSING_FAILED,
+    EXPIRED_JWT_TOKEN,
 
     CATEGORY_NOT_FOUND,
     CATEGORY_ALREADY_EXISTS,

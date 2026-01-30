@@ -56,7 +56,7 @@ public class CategoryController {
 
     }
 
-    @PutMapping("/{categoryTitle}/edit")
+    @PutMapping("/{categoryTitle}/update")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryResponse> modifyCategory(@Valid @RequestBody CategoryRequest request,@PathVariable String categoryTitle)
     {

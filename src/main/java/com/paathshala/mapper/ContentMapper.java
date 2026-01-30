@@ -50,6 +50,9 @@ public class ContentMapper {
         NoteDetails noteDetails = new NoteDetails();
         noteDetails.setId(note.getId());
         noteDetails.setTitle(note.getTitle());
+        noteDetails.setCourseTitle(note.getCourse().getTitle());
+        noteDetails.setDescription(note.getDescription());
+        noteDetails.setCreatedAt(note.getCreatedAt());
         noteDetails.setContentUrl(note.getContentUrl());
         noteDetails.setContentType(note.getContentType());
         noteDetails.setContentSize(note.getContentSize());

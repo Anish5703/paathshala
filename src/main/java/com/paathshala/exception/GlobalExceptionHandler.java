@@ -1,5 +1,6 @@
 package com.paathshala.exception;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.paathshala.dto.ErrorResponse;
 import com.paathshala.exception.category.*;
 import com.paathshala.exception.course.CourseDeleteFailedException;
@@ -8,6 +9,7 @@ import com.paathshala.exception.course.CourseNotFoundException;
 import com.paathshala.exception.course.CourseSaveFailedException;
 import com.paathshala.exception.note.*;
 import com.paathshala.model.ErrorType;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -25,7 +27,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataAccessException.class)
     public ResponseEntity<ErrorResponse> handleDatabaseError(DataAccessException ex) {
 
-        log.error("Database error encountered: {}", ex.getMessage(), ex);
+        log.error("Database error encountered: {} {}", ex.getMessage(), ex.getLocalizedMessage());
 
         ErrorResponse resp = new ErrorResponse(ErrorType.DATABASE_ERROR,"The system is currently unable to process your request. Please try again later");
         return new ResponseEntity<>(resp, HttpStatus.SERVICE_UNAVAILABLE);
@@ -42,13 +44,30 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ErrorResponse> handleExpiredJwt(ExpiredJwtException ex)
+    {
+        log.error(ex.getMessage(),ex.getLocalizedMessage());
+        ErrorResponse resp = new ErrorResponse(ErrorType.EXPIRED_JWT_TOKEN,ex.getMessage());
+        return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException ex)
     {
-        log.error(ex.getMessage(),ex);
+        log.error(ex.getMessage(),ex.getLocalizedMessage());
         ErrorResponse resp = new ErrorResponse(ErrorType.ILLEGAL_ARGUMENTS,ex.getMessage());
         return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(JsonProcessingException.class)
+    public ResponseEntity<ErrorResponse> handleJsonProcessingFailed(JsonProcessingException ex)
+    {
+        log.error(ex.getMessage(),ex.getLocalizedMessage());
+        ErrorResponse resp = new ErrorResponse(ErrorType.JSON_PROCESSING_FAILED,ex.getMessage());
+        return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
+    }
+
+
 
 
     @ExceptionHandler(FileUploadFailedException.class)

@@ -96,7 +96,7 @@ public class ContentService {
         }
         catch(DataAccessException ex)
         {
-            logger.error(ErrorType.NOTE_NOT_SAVED.toString(),ex);
+            logger.error(ErrorType.NOTE_NOT_SAVED.toString(),ex.getMessage());
             throw new NoteSaveFailedException("Note Save Failed : Database Error");
         }
     }
@@ -203,7 +203,7 @@ public class ContentService {
         }
         catch(DataAccessException ex)
         {
-            logger.error(ErrorType.NOTE_NOT_UPDATED.toString(),ex);
+            logger.error(ErrorType.NOTE_NOT_UPDATED.toString(),ex.getMessage());
             throw new NoteUpdateFailedException(String.format("Update Note '%s' Failed : Database Error",noteTitle));
         }
 
@@ -272,7 +272,7 @@ public class ContentService {
             uniqueFileName = storeFile(file, uploadDirectory, content.getContentUrl());
 
         } catch (IOException e) {
-            logger.error(ErrorType.FILE_UPLOAD_FAILED.toString(), e);
+            logger.error(ErrorType.FILE_UPLOAD_FAILED.toString(), e.getMessage());
             throw new FileUploadFailedException("File upload failed");
         }
 
@@ -287,26 +287,46 @@ public class ContentService {
 
 
 
-
     private String storeFile(
             MultipartFile file,
-            String uploadDirectory,
-            String oldFileName) throws IOException {
+            String uploadDirectory,   // e.g., "uploads/notes"
+            String oldFileName
+    ) throws IOException {
 
+        // Convert directory to relative path
         Path directoryPath = Paths.get(uploadDirectory);
-        Files.createDirectories(directoryPath);
+        logger.info("Resolved upload directory: {}", directoryPath);
 
-        if (oldFileName != null) {
-            Files.deleteIfExists(directoryPath.resolve(oldFileName));
+        // Create directories if they do not exist
+        if (!Files.exists(directoryPath)) {
+            Files.createDirectories(directoryPath);
         }
 
-        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
-        String uniqueFileName = UUID.randomUUID() + "." + extension;
+        // Delete old file if provided
+        if (oldFileName != null && !oldFileName.isEmpty()) {
+            Path oldFilePath = directoryPath.resolve(oldFileName);
+            logger.info("Deleted old file if exists: {}", oldFilePath);
+            Files.deleteIfExists(oldFilePath);
+        }
+        // Check file is not empty
+        if (file.isEmpty()) {
+            throw new IOException("Uploaded file is empty!");
+        }
 
-        Files.write(
-                directoryPath.resolve(uniqueFileName),
-                file.getBytes()
-        );
+        // Get file extension
+        String originalName = file.getOriginalFilename();
+        String extension = "";
+        if (originalName != null && originalName.contains(".")) {
+            extension = originalName.substring(originalName.lastIndexOf('.') + 1);
+        }
+
+        // Generate unique filename
+        String uniqueFileName = UUID.randomUUID().toString() + (extension.isEmpty() ? "" : "." + extension);
+
+        // Save the file to disk
+        Path filePath = directoryPath.resolve(uniqueFileName);
+        Files.write(filePath, file.getBytes());
+        logger.info("File saved successfully at: {}", filePath.toAbsolutePath());
 
         return uniqueFileName;
     }
