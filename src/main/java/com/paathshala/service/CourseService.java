@@ -40,6 +40,15 @@ public class CourseService {
     }
 
 
+    public CourseDetails getCourse(String courseTitle)
+    {
+        Course course = courseRepo.findByTitle(courseTitle)
+                .orElseThrow(
+                        () -> new CourseNotFoundException("Course not found")
+                );
+        return courseMapper.toCourseDetails(course);
+    }
+
     @Transactional
     public List<CourseDetails> getAllCourse()
     {

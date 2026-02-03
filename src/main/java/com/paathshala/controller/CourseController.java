@@ -23,16 +23,26 @@ public class CourseController {
     @Autowired
     private CourseService courseService;
 
+
+    @GetMapping("/{courseTitle}")
+    public ResponseEntity<CourseDetails> getCourse(@PathVariable String courseTitle)
+    {
+        String decodedTitle = URLDecoder.decode(courseTitle,StandardCharsets.UTF_8);
+        CourseDetails response = courseService.getCourse(decodedTitle);
+        HttpHeaders header = new HttpHeaders();
+        header.set("Content-Type","application/json");
+        return ResponseEntity.status(HttpStatus.OK).headers(header).body(response);
+
+
+    }
+
     @GetMapping("/all")
     public ResponseEntity<List<CourseDetails>> allCourses()
     {
         List<CourseDetails> response = courseService.getAllCourse();
         HttpHeaders header = new HttpHeaders();
         header.set("Content-Type","application/json");
-        if(response.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).headers(header).body(response);
-        else
-            return ResponseEntity.status(HttpStatus.OK).headers(header).body(response);
+        return ResponseEntity.status(HttpStatus.OK).headers(header).body(response);
     }
 
     @PostMapping("/add")
