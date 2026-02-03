@@ -14,7 +14,7 @@ public class CourseRequest {
     private String title;
 
     @NotNull(message = "Category ID is required")
-    private int categoryId;
+    private String categoryTitle;
 
     private double price;
     private String description;
@@ -22,9 +22,9 @@ public class CourseRequest {
     private boolean isPublished;
     private int estimatedTime;
 
-    public CourseRequest(String title, int categoryId, double price, String description, boolean isPublished, int estimatedTime) {
+    public CourseRequest(String title, String categoryTitle, double price, String description, boolean isPublished, int estimatedTime) {
         this.title = title;
-        this.categoryId = categoryId;
+        this.categoryTitle = categoryTitle;
         this.price = price;
         this.description = description;
         this.isPublished = isPublished;

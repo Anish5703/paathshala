@@ -65,7 +65,7 @@ public class CourseService {
 
        Course course = courseMapper.toEntity(request);
         //set category to the course
-        course.setCategory(findCategory(request.getCategoryId()));
+        course.setCategory(findCategory(request.getCategoryTitle()));
 
         try {
             Course savedCourse = courseRepo.save(course);
@@ -94,7 +94,7 @@ public class CourseService {
 
         Course modifiedCourse = courseMapper.toEntity(request);
         //set new category to the course
-        modifiedCourse.setCategory(findCategory(request.getCategoryId()));
+        modifiedCourse.setCategory(findCategory(request.getCategoryTitle()));
 
        if(!request.getTitle().equals(courseTitle))
        {
@@ -140,11 +140,11 @@ public class CourseService {
        }
     }
 
-    public Category findCategory(int id)
+    public Category findCategory(String categoryTitle)
     {
-        return categoryRepo.findById(id)
+        return categoryRepo.findByTitle(categoryTitle)
                 .orElseThrow(
-                        () -> new CategoryNotFoundException(String.format("No Category '%d' found",id))
+                        () -> new CategoryNotFoundException(String.format("No Category '%s' found",categoryTitle))
                 );
 
 
