@@ -5,6 +5,7 @@ import com.paathshala.dto.login.LoginResponse;
 import com.paathshala.dto.register.OauthRegisterRequest;
 import com.paathshala.dto.register.RegisterRequest;
 import com.paathshala.dto.register.RegisterResponse;
+import com.paathshala.exception.auth.LoginFailedException;
 import com.paathshala.model.Role;
 import com.paathshala.service.OauthService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,15 +30,10 @@ public class OauthController {
     @GetMapping("/register")
     public ResponseEntity<RegisterRequest> setUsername(@CookieValue(name="email",required = false)String email)
     {
-        RegisterRequest registerRequest;
-        if(email!=null) {
-            registerRequest = new RegisterRequest(null,null,email, Role.STUDENT); // harcoded role STUDENT in oauth registration
+        RegisterRequest registerRequest = new RegisterRequest(null,null,email, Role.STUDENT); // harcoded role STUDENT in oauth registration
             return ResponseEntity.status(HttpStatus.OK).body(registerRequest);
-        }
-        else {
-            registerRequest = new RegisterRequest();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(registerRequest);
-        }
+
+
     }
 
     //Endpoint to register user for first time oauth login
@@ -50,16 +46,9 @@ public class OauthController {
                oauthRegisterRequest.getUsername(),password, oauthRegisterRequest.getEmail(), oauthRegisterRequest.getRole()
         );
       RegisterResponse registerResponse = oauthService.registerUser(registerRequest);
-      if(!registerResponse.isError())
-      {
-         boolean isCookieSet =  oauthService.setJwtCookie(registerResponse.getUsername(),servletResponse,servletRequest);
-               registerResponse.addMessage("isCookieSet",isCookieSet);
+         oauthService.setJwtCookie(registerResponse.getUsername(),servletResponse,servletRequest);
           return ResponseEntity.status(HttpStatus.OK).body(registerResponse);
-      }
-      else
-      {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(registerResponse);
-      }
+
     }
 
     //home endpoint after auth login
@@ -67,17 +56,14 @@ public class OauthController {
     public ResponseEntity<LoginResponse> oauthHome(@CookieValue(name="jwt",required = false)String token)
     {
         if (token == null || token.isBlank()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new LoginResponse(null,null,null,null,Map.of("status","No jwt token generated"),true));
+            throw new LoginFailedException("No session detected: Login Again");
         }
 
         LoginResponse loginResponse = oauthService.validateToken(token);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization","Bearer "+token);
-        if(!loginResponse.isError())
             return ResponseEntity.status(HttpStatus.OK).headers(headers).body(loginResponse);
-        else
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(loginResponse);
+
 
     }
 

@@ -2,6 +2,7 @@ package com.paathshala.exception;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.paathshala.dto.ErrorResponse;
+import com.paathshala.exception.auth.*;
 import com.paathshala.exception.category.*;
 import com.paathshala.exception.course.CourseDeleteFailedException;
 import com.paathshala.exception.course.CourseDuplicateFoundException;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.io.IOException;
+import java.security.SignatureException;
 
 @Slf4j
 @RestControllerAdvice
@@ -48,15 +50,24 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleExpiredJwt(ExpiredJwtException ex)
     {
         log.error(ex.getMessage(),ex.getLocalizedMessage());
-        ErrorResponse resp = new ErrorResponse(ErrorType.EXPIRED_JWT_TOKEN,ex.getMessage());
+        ErrorResponse resp = new ErrorResponse(ErrorType.EXPIRED_JWT_TOKEN,ex.getLocalizedMessage());
         return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(SignatureException.class)
+    public ResponseEntity<ErrorResponse> handleExpiredJwt(io.jsonwebtoken.security.SignatureException ex)
+    {
+        log.error(ex.getMessage(),ex.getLocalizedMessage());
+        ErrorResponse resp = new ErrorResponse(ErrorType.EXPIRED_JWT_TOKEN,ex.getLocalizedMessage());
+        return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
+    }
+
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException ex)
     {
         log.error(ex.getMessage(),ex.getLocalizedMessage());
-        ErrorResponse resp = new ErrorResponse(ErrorType.ILLEGAL_ARGUMENTS,ex.getMessage());
+        ErrorResponse resp = new ErrorResponse(ErrorType.ILLEGAL_ARGUMENTS,ex.getLocalizedMessage());
         return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(JsonProcessingException.class)
@@ -73,29 +84,71 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(FileUploadFailedException.class)
     public ResponseEntity<ErrorResponse> handleFileNotUpload(FileUploadFailedException ex)
     {
-        log.error("File upload error encountered: ",ex);
-        ErrorResponse resp = new ErrorResponse(ErrorType.FILE_UPLOAD_FAILED,ex.getMessage());
+        log.error("File upload error encountered: ",ex.getLocalizedMessage());
+        ErrorResponse resp = new ErrorResponse(ErrorType.FILE_UPLOAD_FAILED,ex.getLocalizedMessage());
         return new ResponseEntity<>(resp,HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    /* Authentication Exception handling */
+    @ExceptionHandler(DuplicateUsernameFoundException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateUsernameFound(DuplicateUsernameFoundException ex)
+    {
+        log.error(ErrorType.DUPLICATE_USERNAME.toString(),ex.getLocalizedMessage());
+        ErrorResponse resp = new ErrorResponse(ErrorType.DUPLICATE_USERNAME,ex.getMessage());
+        return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(DuplicateEmailFoundException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateEmailFound(DuplicateEmailFoundException ex)
+    {
+        log.error(ErrorType.DUPLICATE_EMAIL.toString(),ex.getLocalizedMessage());
+        ErrorResponse resp = new ErrorResponse(ErrorType.DUPLICATE_EMAIL,ex.getMessage());
+        return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(ValidationFailedException.class)
+    public ResponseEntity<ErrorResponse> handleValidationFailed(ValidationFailedException ex)
+    {
+        log.error(ErrorType.VALIDATION_ERROR.toString(),ex.getLocalizedMessage());
+        ErrorResponse resp = new ErrorResponse(ErrorType.VALIDATION_ERROR,ex.getMessage());
+        return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
+
+    }
+    @ExceptionHandler(RegistrationFailedException.class)
+    public ResponseEntity<ErrorResponse> handleRegistrationFailed(RegistrationFailedException ex)
+    {
+        log.error(ErrorType.REGISTRATION_FAILED.toString(),ex.getLocalizedMessage());
+        ErrorResponse resp = new ErrorResponse(ErrorType.REGISTRATION_FAILED,ex.getMessage());
+        return new ResponseEntity<>(resp,HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    @ExceptionHandler(LoginFailedException.class)
+    public ResponseEntity<ErrorResponse> handleLoginFailed(LoginFailedException ex)
+    {
+        log.error(ErrorType.LOGIN_FAILED.toString(),ex.getLocalizedMessage());
+        ErrorResponse resp = new ErrorResponse(ErrorType.LOGIN_FAILED,ex.getMessage());
+        return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
+
+    }
+
+
+
 
     @ExceptionHandler(CategoryNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleCategoryNotFound(CategoryNotFoundException ex)
     {
-        log.error(ex.getMessage(),ex);
+        log.error(ex.getMessage(),ex.getLocalizedMessage());
         ErrorResponse resp = new ErrorResponse(ErrorType.CATEGORY_NOT_FOUND,ex.getMessage());
         return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(CategoryDuplicateFoundException.class)
     public ResponseEntity<ErrorResponse> handleDuplicateFound(CategoryDuplicateFoundException ex)
     {
-        log.error(ex.getMessage(),ex);
-        ErrorResponse resp = new ErrorResponse(ErrorType.CATEGORY_ALREADY_EXISTS,ex.getMessage());
+        log.error(ex.getMessage(),ex.getLocalizedMessage());
+        ErrorResponse resp = new ErrorResponse(ErrorType.DUPLICATE_CATEGORY,ex.getMessage());
         return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(CategorySaveFailedException.class)
     public ResponseEntity<ErrorResponse> handleCategorySaveFailed(CategorySaveFailedException ex)
     {
-        log.error(ex.getMessage(),ex);
+        log.error(ex.getMessage(),ex.getLocalizedMessage());
         ErrorResponse resp = new ErrorResponse(ErrorType.CATEGORY_NOT_SAVED,ex.getMessage());
         return new ResponseEntity<>(resp,HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -103,14 +156,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CategoryUpdateFailedException.class)
     public ResponseEntity<ErrorResponse> handleCategoryUpdateFailed(CategoryUpdateFailedException ex)
     {
-        log.error(ex.getMessage(),ex);
+        log.error(ex.getMessage(),ex.getLocalizedMessage());
         ErrorResponse resp = new ErrorResponse(ErrorType.CATEGORY_NOT_UPDATED,ex.getMessage());
         return new ResponseEntity<>(resp,HttpStatus.INTERNAL_SERVER_ERROR);
     }
     @ExceptionHandler(CategoryDeleteFailedException.class)
     public ResponseEntity<ErrorResponse> handleCategoryDeleteFailed(CategoryDeleteFailedException ex)
     {
-        log.error(ex.getMessage(),ex);
+        log.error(ex.getMessage(),ex.getLocalizedMessage());
         ErrorResponse resp = new ErrorResponse(ErrorType.CATEGORY_NOT_DELETED,ex.getMessage());
         return new ResponseEntity<>(resp,HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -120,7 +173,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CourseNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleCourseNotFound(CourseNotFoundException ex)
     {
-        log.error(ex.getMessage(),ex);
+        log.error(ex.getMessage(),ex.getLocalizedMessage());
         ErrorResponse resp = new ErrorResponse();
         resp.setErrorType(ErrorType.COURSE_NOT_FOUND);
         resp.setMessage(ex.getMessage());
@@ -130,22 +183,22 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CourseDeleteFailedException.class)
     public ResponseEntity<ErrorResponse> handleCourseDuplicateFound(CourseDeleteFailedException ex)
     {
-        log.error(ex.getMessage(),ex);
+        log.error(ex.getMessage(),ex.getLocalizedMessage());
         ErrorResponse resp = new ErrorResponse(ErrorType.COURSE_NOT_DELETED,ex.getMessage());
         return new ResponseEntity<>(resp,HttpStatus.INTERNAL_SERVER_ERROR);
     }
     @ExceptionHandler(CourseDuplicateFoundException.class)
     public ResponseEntity<ErrorResponse> handleCourseDuplicateFound(CourseDuplicateFoundException ex)
     {
-        log.error(ex.getMessage(),ex);
-        ErrorResponse resp = new ErrorResponse(ErrorType.COURSE_ALREADY_EXISTS,ex.getMessage());
+        log.error(ex.getMessage(),ex.getLocalizedMessage());
+        ErrorResponse resp = new ErrorResponse(ErrorType.DUPLICATE_COURSE,ex.getMessage());
         return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(CourseSaveFailedException.class)
     public ResponseEntity<ErrorResponse> handleCourseSaveFailed(CourseSaveFailedException ex)
     {
-        log.error(ex.getMessage(),ex);
+        log.error(ex.getMessage(),ex.getLocalizedMessage());
         ErrorResponse resp = new ErrorResponse(ErrorType.COURSE_NOT_SAVED,ex.getMessage());
         return new ResponseEntity<>(resp,HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -155,29 +208,29 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoteNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNoteNotFound(NoteNotFoundException ex)
     {
-        log.error(ex.getMessage(),ex);
+        log.error(ex.getMessage(),ex.getLocalizedMessage());
         ErrorResponse resp = new ErrorResponse(ErrorType.NOTE_NOT_FOUND,ex.getMessage());
         return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(NoteDuplicateFoundException.class)
     public ResponseEntity<ErrorResponse> handleNoteDuplicateFound(NoteDuplicateFoundException ex)
     {
-        log.error(ex.getMessage(),ex);
-        ErrorResponse resp = new ErrorResponse(ErrorType.NOTE_ALREADY_EXISTS,ex.getMessage());
+        log.error(ex.getMessage(),ex.getLocalizedMessage());
+        ErrorResponse resp = new ErrorResponse(ErrorType.DUPLICATE_NOTE,ex.getMessage());
         return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NoteUpdateFailedException.class)
     public ResponseEntity<ErrorResponse> handleNoteUpdateFailed(NoteUpdateFailedException ex)
     {
-        log.error(ex.getMessage(),ex);
+        log.error(ex.getMessage(),ex.getLocalizedMessage());
         ErrorResponse resp = new ErrorResponse(ErrorType.NOTE_NOT_UPDATED,ex.getMessage());
         return new ResponseEntity<>(resp,HttpStatus.INTERNAL_SERVER_ERROR);
     }
     @ExceptionHandler(NoteSaveFailedException.class)
     public ResponseEntity<ErrorResponse> handleNoteSaveFailed(NoteSaveFailedException ex)
     {
-        log.error(ex.getMessage(),ex);
+        log.error(ex.getMessage(),ex.getLocalizedMessage());
         ErrorResponse resp = new ErrorResponse(ErrorType.NOTE_NOT_SAVED,ex.getMessage());
         return new ResponseEntity<>(resp,HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -185,7 +238,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoteDeleteFailedException.class)
     public ResponseEntity<ErrorResponse> handleNoteDeleteFailed(NoteDeleteFailedException ex)
     {
-        log.error(ex.getMessage(),ex);
+        log.error(ex.getMessage(),ex.getLocalizedMessage());
         ErrorResponse resp = new ErrorResponse(ErrorType.NOTE_NOT_DELETED,ex.getMessage());
         return new ResponseEntity<>(resp,HttpStatus.INTERNAL_SERVER_ERROR);
 

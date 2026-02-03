@@ -41,10 +41,8 @@ public class AuthController {
         RegisterResponse resp = authService.registerUser(req,servletRequest);
         HttpHeaders header = new HttpHeaders();
         header.set("Content-Type","application/json");
-        if (!resp.isError())
             return ResponseEntity.status(HttpStatus.CREATED).headers(header).body(resp);
-        else
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).body(resp);
+
         }
 
       //Endpoint to confirm registration
@@ -54,10 +52,8 @@ public class AuthController {
         RegisterResponse resp = authService.validateRegisterConfirmation(token);
         HttpHeaders header = new HttpHeaders();
         header.set("Content-Type","application/json");
-        if(!resp.isError())
             return ResponseEntity.status(HttpStatus.CREATED).headers(header).body(resp);
-        else
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).body(resp);
+
     }
     //Endpoint to send confirmation token
     @PutMapping("/resendConfirmation")
@@ -66,10 +62,8 @@ public class AuthController {
         RegisterResponse resp = authService.resendConfirmationToken(email,servletRequest);
         HttpHeaders header = new HttpHeaders();
         header.set("Content-Type","application/json");
-        if(!resp.isError())
             return ResponseEntity.status(HttpStatus.OK).headers(header).body(resp);
-        else
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).body(resp);
+
 
     }
 
@@ -80,12 +74,9 @@ public class AuthController {
         LoginResponse resp = authService.loginUser(loginRequest);
         HttpHeaders header = new HttpHeaders();
         header.set("Content-Type","application/json");
-        if(!resp.isError()) {
             header.set("Authorization","Bearer "+resp.getToken());
-            return ResponseEntity.status(HttpStatus.ACCEPTED).headers(header).body(resp);
-        }
-        else
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).headers(header).body(resp);
+            return ResponseEntity.status(HttpStatus.OK).headers(header).body(resp);
+
     }
 
 

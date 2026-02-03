@@ -42,40 +42,27 @@ public class UserMapper {
     }
 
    //User Entity to LoginResponse DTO
-    public static LoginResponse toLoginResponse(User user, String token, Map<String,Object> message, boolean error)
+    public static LoginResponse toLoginResponse(User user, String token, String message)
     {
         return new LoginResponse(
                 user.getUsername(),
                 user.getEmail(),
                 user.getRole(),
                 token,
-                message,
-                error
+                message
         );
     }
 
-    //LoginRequest to loginResponse DTO
-    public static LoginResponse toLoginResponse(LoginRequest request,Map<String,Object> message,boolean error)
-    {
-        return new LoginResponse(
-                request.getUsername(),
-                null,
-                null,
-                null,
-                message,
-                error
-        );
-    }
+
 
     //User Entity to RegisterResponse DTO
-    public static RegisterResponse toRegisterResponse(User user,Map<String,Object> message,boolean error)
+    public static RegisterResponse toRegisterResponse(User user,String message)
     {
          return new RegisterResponse(
                  user.getUsername(),
                  user.getEmail(),
                  user.getRole(),
-                 message,
-                 error
+                 message
          );
     }
 }
