@@ -6,6 +6,7 @@ import com.paathshala.dto.course.CourseRequest;
 import com.paathshala.dto.course.CourseResponse;
 import com.paathshala.entity.Category;
 import com.paathshala.entity.Course;
+import com.paathshala.exception.FileUploadFailedException;
 import com.paathshala.exception.category.CategoryNotFoundException;
 import com.paathshala.exception.course.*;
 import com.paathshala.mapper.CourseMapper;
@@ -14,10 +15,18 @@ import com.paathshala.repository.CategoryRepo;
 import com.paathshala.repository.CourseRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 @Service
@@ -29,6 +38,9 @@ public class CourseService {
     private final CategoryRepo categoryRepo;
 
     private final CourseMapper courseMapper;
+
+    @Value("${course.dir}")
+    private String courseDirectory;
 
     private static final Logger logger = LoggerFactory.getLogger(CourseService.class);
 
@@ -63,7 +75,7 @@ public class CourseService {
 
 
    @Transactional
-    public CourseResponse addCourse(CourseRequest request)
+    public CourseResponse addCourse(CourseRequest request, MultipartFile image)
     {
         if(request==null)
             throw new IllegalArgumentException("Course cannot be null");
@@ -77,13 +89,15 @@ public class CourseService {
         course.setCategory(findCategory(request.getCategoryTitle()));
 
         try {
+            String imageUrl = storeImage(image,courseDirectory,null);
+            course.setImageUrl(imageUrl);
             Course savedCourse = courseRepo.save(course);
             ApiMessage message = new ApiMessage();
             message.setStatus("Course added");
             message.setDetails(String.format("Course '%s' created successfully",request.getTitle()));
             return courseMapper.toCourseResponseSuccess(savedCourse,message);
         }
-        catch(DataAccessException ex)
+        catch(DataAccessException | IOException ex)
         {
             logger.error(ErrorType.COURSE_NOT_SAVED.toString(),ex);
             throw new CourseSaveFailedException(String.format("Failed to save course '%s' : Database Error",course.getTitle()));
@@ -100,17 +114,8 @@ public class CourseService {
                 .orElseThrow(
                         () -> new CourseNotFoundException(String.format("Failed to update course : Course '%s' not found",courseTitle))
                 );
+        Course modifiedCourse = prepareCourseUpdate(request,course);
 
-        Course modifiedCourse = courseMapper.toEntity(request);
-        //set new category to the course
-        modifiedCourse.setCategory(findCategory(request.getCategoryTitle()));
-
-       if(!request.getTitle().equals(courseTitle))
-       {
-          boolean isTitleDuplicate = courseRepo.existsByTitle(request.getTitle());
-          if(isTitleDuplicate)
-              throw new CourseDuplicateFoundException("Failed to update course : Course '%s' already exists");
-       }
        try {
            Course updatedCourse = courseRepo.save(modifiedCourse);
            ApiMessage message = new ApiMessage();
@@ -158,6 +163,85 @@ public class CourseService {
 
 
 
+    }
+
+    private String storeImage(
+            MultipartFile file,
+            String uploadDirectory,
+            String oldFileName
+    ) throws IOException {
+
+        // Convert directory to relative path
+        Path directoryPath = Paths.get(uploadDirectory);
+        logger.info("Resolved upload directory: {}", directoryPath);
+
+        // Create directories if they do not exist
+        if (!Files.exists(directoryPath)) {
+            Files.createDirectories(directoryPath);
+        }
+
+        // Delete old file if provided
+        if (oldFileName != null && !oldFileName.isEmpty()) {
+            Path oldFilePath = directoryPath.resolve(oldFileName);
+            logger.info("Deleted old file if exists: {}", oldFilePath);
+            Files.deleteIfExists(oldFilePath);
+        }
+        // Check file is not empty
+        if (file.isEmpty()) {
+            throw new IOException("Uploaded file is empty!");
+        }
+
+        // Get file extension
+        String originalName = file.getOriginalFilename();
+        String extension = "";
+        if (originalName != null && originalName.contains(".")) {
+            extension = originalName.substring(originalName.lastIndexOf('.') + 1);
+        }
+
+        // Generate unique filename
+        String uniqueFileName = UUID.randomUUID().toString() + (extension.isEmpty() ? "" : "." + extension);
+
+        // Save the file to disk
+        Path filePath = directoryPath.resolve(uniqueFileName);
+        Files.write(filePath, file.getBytes());
+        logger.info("Image saved successfully at: {}", filePath.toAbsolutePath());
+
+        return uniqueFileName;
+    }
+
+
+
+    private  boolean isHashEqual(String contentHash,MultipartFile file){
+
+        String newHash = calculateHash(file);
+        return contentHash != null &&
+                contentHash.equals(newHash);
+    }
+
+
+    private String calculateHash(MultipartFile file)  {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(file.getBytes());
+            return HexFormat.of().formatHex(hash);
+        }
+        catch(NoSuchAlgorithmException | IOException ex)
+        {
+            logger.error("File hash calculation error : {}",ex.getMessage());
+            throw new FileUploadFailedException("File hash calculation error");
+        }
+    }
+
+    private Course prepareCourseUpdate(CourseRequest request,Course course)
+    {
+        course.setTitle(request.getTitle());
+        course.setDescription(request.getDescription());
+        course.setPrice(request.getPrice());
+        course.setCategory(findCategory(request.getCategoryTitle()));
+        course.setPublished(request.isPublished());
+        course.setImageUrl(request.getImageUrl());
+        course.setEstimatedTime(request.getEstimatedTime());
+        return course;
     }
 
 }

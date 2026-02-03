@@ -35,7 +35,8 @@ public class CourseMapper {
                 course.getPrice(),
                 course.getDescription(),
                 course.isPublished(),
-                course.getEstimatedTime()
+                course.getEstimatedTime(),
+                course.getImageUrl()
                 );
     }
     public CourseDetails toCourseDetails(Course course)
@@ -46,7 +47,8 @@ public class CourseMapper {
                 course.getPrice(),
                 course.getDescription(),
                 course.isPublished(),
-                course.getEstimatedTime()
+                course.getEstimatedTime(),
+                course.getImageUrl()
         );
     }
 

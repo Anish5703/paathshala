@@ -31,7 +31,9 @@ public class Course {
 
     private int estimatedTime;
 
- public Course(String title,Category category,double price,String description,boolean isPublished,int estimatedTime)
+    private String imageUrl;
+
+ public Course(String title,Category category,double price,String description,boolean isPublished,int estimatedTime,String imageUrl)
  {
      this.title = title;
      this.category = category;

@@ -19,6 +19,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${modelQuestion.dir}")
     private String modelQuestionDir;
 
+    @Value("${course.dir}")
+    private String courseDir;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
@@ -30,6 +33,9 @@ public class WebConfig implements WebMvcConfigurer {
 
         registry.addResourceHandler("/modelQuestion/**")
                 .addResourceLocations(Paths.get(modelQuestionDir).toUri().toString());
+
+        registry.addResourceHandler("/course/**")
+                .addResourceLocations(Paths.get(courseDir).toUri().toString());
     }
 
     @Override

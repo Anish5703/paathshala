@@ -22,12 +22,15 @@ public class CourseRequest {
     private boolean isPublished;
     private int estimatedTime;
 
-    public CourseRequest(String title, String categoryTitle, double price, String description, boolean isPublished, int estimatedTime) {
+    private String imageUrl;
+
+    public CourseRequest(String title, String categoryTitle, double price, String description, boolean isPublished, int estimatedTime,String imageUrl) {
         this.title = title;
         this.categoryTitle = categoryTitle;
         this.price = price;
         this.description = description;
         this.isPublished = isPublished;
         this.estimatedTime = estimatedTime;
+        this.imageUrl = imageUrl;
     }
 }

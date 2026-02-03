@@ -25,15 +25,10 @@ public class CourseResponse {
 
     private ApiMessage message;
 
+    private String imageUrl;
 
-    // Constructor for quick error responses
-    public CourseResponse(String title,ApiMessage message, boolean isError) {
-        this.title = title;
-        this.message = message;
 
-    }
-
-    public CourseResponse(int id, String title, String categoryTitle, double price, String description, boolean isPublished, int estimatedTime) {
+    public CourseResponse(int id, String title, String categoryTitle, double price, String description, boolean isPublished, int estimatedTime,String imageUrl) {
         this.id = id;
         this.title = title;
         this.categoryTitle = categoryTitle;
@@ -41,5 +36,6 @@ public class CourseResponse {
         this.description = description;
         this.isPublished = isPublished;
         this.estimatedTime = estimatedTime;
+        this.imageUrl=imageUrl;
     }
 }

@@ -14,4 +14,5 @@ public class CourseDetails {
     private String description;
     private boolean isPublished;
     private int estimatedTime;
+    private String imageUrl;
 }
