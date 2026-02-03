@@ -1,10 +1,10 @@
 package com.paathshala.mapper;
 
 
-import com.paathshala.DTO.Login.LoginRequest;
-import com.paathshala.DTO.Login.LoginResponse;
-import com.paathshala.DTO.Register.RegisterRequest;
-import com.paathshala.DTO.Register.RegisterResponse;
+import com.paathshala.dto.login.LoginRequest;
+import com.paathshala.dto.login.LoginResponse;
+import com.paathshala.dto.register.RegisterRequest;
+import com.paathshala.dto.register.RegisterResponse;
 import com.paathshala.entity.Admin;
 import com.paathshala.entity.Student;
 import com.paathshala.model.Role;
@@ -42,40 +42,27 @@ public class UserMapper {
     }
 
    //User Entity to LoginResponse DTO
-    public static LoginResponse toLoginResponse(User user, String token, Map<String,Object> message, boolean error)
+    public static LoginResponse toLoginResponse(User user, String token, String message)
     {
         return new LoginResponse(
                 user.getUsername(),
                 user.getEmail(),
                 user.getRole(),
                 token,
-                message,
-                error
+                message
         );
     }
 
-    //LoginRequest to loginResponse DTO
-    public static LoginResponse toLoginResponse(LoginRequest request,Map<String,Object> message,boolean error)
-    {
-        return new LoginResponse(
-                request.getUsername(),
-                null,
-                null,
-                null,
-                message,
-                error
-        );
-    }
+
 
     //User Entity to RegisterResponse DTO
-    public static RegisterResponse toRegisterResponse(User user,Map<String,Object> message,boolean error)
+    public static RegisterResponse toRegisterResponse(User user,String message)
     {
          return new RegisterResponse(
                  user.getUsername(),
                  user.getEmail(),
                  user.getRole(),
-                 message,
-                 error
+                 message
          );
     }
 }

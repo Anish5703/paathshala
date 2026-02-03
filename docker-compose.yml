@@ -51,6 +51,11 @@ services:
 
 
     restart: unless-stopped
+    # Add volumes for uploads
+    volumes:
+      - ./uploads/notes:/uploads/notes
+      - ./uploads/videos:/uploads/videos
+      - ./uploads/modelQuestions:/uploads/modelQuestions
 
 volumes:
   pgdata:

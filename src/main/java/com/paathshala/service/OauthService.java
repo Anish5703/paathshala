@@ -1,12 +1,15 @@
 package com.paathshala.service;
 
 
-import com.paathshala.DTO.Login.LoginResponse;
-import com.paathshala.DTO.Register.RegisterRequest;
-import com.paathshala.DTO.Register.RegisterResponse;
+import com.paathshala.dto.login.LoginResponse;
+import com.paathshala.dto.register.RegisterRequest;
+import com.paathshala.dto.register.RegisterResponse;
 import com.paathshala.entity.Admin;
 import com.paathshala.entity.Student;
 import com.paathshala.entity.User;
+import com.paathshala.exception.auth.DuplicateUsernameFoundException;
+import com.paathshala.exception.auth.LoginFailedException;
+import com.paathshala.exception.auth.RegistrationFailedException;
 import com.paathshala.mapper.UserMapper;
 import com.paathshala.model.Role;
 import com.paathshala.repository.AdminRepo;
@@ -50,8 +53,7 @@ public class OauthService {
 
         if(usernameExists)
         {
-            Map<String , Object > map = new HashMap<>(Map.of("username", "Username already exists", "status", "Registration Unsuccessfull"));
-            return new RegisterResponse(req.getUsername(), req.getEmail(), null, map, true);
+            throw new DuplicateUsernameFoundException("Username already exists");
         }
         else
         {
@@ -67,14 +69,12 @@ public class OauthService {
                     Admin admin = (Admin) user;
                     newUser = adminRepo.save(admin);
                 }
-                Map<String , Object > map = new HashMap<>(Map.of("status","Registration Successful"));
-                return UserMapper.toRegisterResponse(newUser, map, false);
+
+                return UserMapper.toRegisterResponse(newUser,"Registration Successful");
             }
             catch(Exception e)
             {
-                System.out.println("Unable to save new user "+req.getUsername());
-                Map<String , Object > map = new HashMap<>(Map.of("status","Registration Unsuccessfull","exception",e.getLocalizedMessage()));
-                return new RegisterResponse(req.getUsername(), req.getEmail(), req.getRole(), map, true);
+                throw new RegistrationFailedException("Failed to register new user");
 
             }
         }
@@ -126,9 +126,9 @@ public class OauthService {
         String username =(String) jwtService.extractUsername(token);
         User user = userRepo.findByUsername(username);
         if(user != null)
-            return UserMapper.toLoginResponse(user,token,Map.of("status" , "Login Successfully"),false);
+            return UserMapper.toLoginResponse(user,token,"Login Successful");
         else
-            return UserMapper.toLoginResponse(user,token,Map.of("status","Token invalid"),true);
+            throw new LoginFailedException("Session expired : Login again");
     }
 
     //Method to check if username exists in database

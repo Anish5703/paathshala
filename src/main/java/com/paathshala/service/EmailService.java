@@ -28,7 +28,7 @@ public void sendHtmlEmail(String to, String subject, String htmlContent) throws 
 //Custom html mail for confirmation
     public String buildConfirmationEmail(String username, String confirmationLink) {
         return String.format("""
-        <p>Hi %s,</p>
+        <p>Did you just sign in to Paathshala %s ?,</p>
         <p>Click below to confirm your email:</p>
         <p><a href="%s" style="color: white; background: #28a745; padding: 10px 15px; text-decoration: none; border-radius: 5px;">Confirm Email</a></p>
         <p>If you didn't request this, ignore this email.</p>

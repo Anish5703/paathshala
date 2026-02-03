@@ -18,43 +18,71 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-@Autowired
-private JwtService jwtService;
+    @Autowired
+    private JwtService jwtService;
 
-@Autowired
-private MyUserDetailsService userDetailsService;
+    @Autowired
+    private MyUserDetailsService userDetailsService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse resp, FilterChain filterChain) throws ServletException,
-            NullPointerException ,IOException, ExpiredJwtException, SignatureException {
-        String authHeader = req.getHeader("Authorization");
+    protected void doFilterInternal(HttpServletRequest req,
+                                    HttpServletResponse resp,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
+
         String token = null;
         String username = null;
 
-        if(authHeader != null && authHeader.startsWith("Bearer "))
-        {
+        // 1️⃣ Try Authorization header (for API / Postman)
+        String authHeader = req.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
-            username = jwtService.extractUsername(token);
         }
-        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null)
-        {
+
+        // 2️⃣ If no header, try COOKIE (OAuth flow)
+        if (token == null && req.getCookies() != null) {
+            for (var cookie : req.getCookies()) {
+                if ("jwt".equals(cookie.getName())) {
+                    token = cookie.getValue();
+                }
+            }
+        }
+
+        // 3️⃣ Validate & authenticate
+        if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            username = jwtService.extractUsername(token);
+
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            if(jwtService.validateToken(token,userDetails))
-            {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource()
-                        .buildDetails(req));
+
+            if (jwtService.validateToken(token, userDetails)) {
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities()
+                        );
+
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
-
         }
 
-        filterChain.doFilter(req,resp);
+        filterChain.doFilter(req, resp);
     }
 
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+
+        return path.startsWith("/note/")
+                || path.startsWith("/video/")
+                || path.startsWith("/modelQuestion/")
+                || path.startsWith("/swagger-ui")
+                || path.startsWith("/v3/api-docs");
+    }
 
 }
+

@@ -3,8 +3,7 @@ package com.paathshala.entity;
 import com.paathshala.model.Role;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
+
 
 @Entity
 @Table(name = "admin_tbl")

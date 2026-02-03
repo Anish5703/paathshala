@@ -1,13 +1,14 @@
 package com.paathshala.service;
 
 
-import com.paathshala.DTO.Login.LoginRequest;
-import com.paathshala.DTO.Login.LoginResponse;
-import com.paathshala.DTO.Register.RegisterRequest;
-import com.paathshala.DTO.Register.RegisterResponse;
+import com.paathshala.dto.login.LoginRequest;
+import com.paathshala.dto.login.LoginResponse;
+import com.paathshala.dto.register.RegisterRequest;
+import com.paathshala.dto.register.RegisterResponse;
 import com.paathshala.entity.Admin;
 import com.paathshala.entity.Student;
 import com.paathshala.entity.User;
+import com.paathshala.exception.auth.*;
 import com.paathshala.mapper.UserMapper;
 import com.paathshala.model.Role;
 import com.paathshala.model.Token;
@@ -68,23 +69,18 @@ public class AuthService {
                     .orElseThrow(
                             ()-> new UsernameNotFoundException("User not found with username or email : "+req.getUsername())
                     );
-            Map<String,Object> map = new HashMap<>();
-            map.put("status","Login Successfully");
+            String message = "Login Successful";
             String token = jwtService.generateToken(user.getUsername());
-            return UserMapper.toLoginResponse(user,token,map,false);
+            return UserMapper.toLoginResponse(user,token,message);
         }
   catch(AuthenticationException ex)
         {
             Optional<User> user = userRepo.findByUsernameOrEmail(req.getUsername(),req.getUsername());
-            Map<String,Object> map = new HashMap<>();
-            if(user.isEmpty())
-                map.put("username","Username or Email Invalid");
 
-            else if(!encoder.matches(req.getPassword(),user.get().getPassword()))
-                map.put("password","Password Invalid");
+            if(!encoder.matches(req.getPassword(),user.get().getPassword()))
+                throw new LoginFailedException("Password didn't matched");
 
-            map.put("status","Login Failed : "+ex.getLocalizedMessage());
-            return UserMapper.toLoginResponse(req,map,true);
+            throw new LoginFailedException("Credentials didn't matched");
 
         }
     }
@@ -97,12 +93,8 @@ public class AuthService {
 
         //Validating request for email and username
         RegisterResponse response = validateRegisterRequest(req);
-        if (response.isError())
-            return response;
-
         //Processing Valid request
         User user = UserMapper.toEntity(req) ;
-        Map<String, Object> map = new HashMap<>();
         try{
             User newUser =  null;
             if(req.getRole().equals(Role.STUDENT)) {
@@ -118,22 +110,18 @@ public class AuthService {
 
 
             //prepare response to send
-            map.put("status","Check mail for confirmation link");
+            response.setMessage("Check mail for confirmation link");
             response.setRole(req.getRole());
-            response.setError(false);
             //send confirmation token to the user email address
             sendConfirmationToken(newUser,servletRequest);
-
+            return response;
         }
         catch(Exception e)
         {
-            map.put("status", "Registration Failed");
-            map.put("exception",e.getLocalizedMessage());
-            response.setError(true);
+           throw new RegistrationFailedException("Failed to register new user");
         }
 
-            response.setMessage(map);
-            return response;
+
 
     }
 
@@ -142,19 +130,13 @@ public class AuthService {
         RegisterResponse resp = new RegisterResponse();
         resp.setUsername(req.getUsername());
         resp.setEmail(req.getEmail());
-
-        Map<String, Object> map = new HashMap<String, Object>();
-
         if (isUsernameExists(req.getUsername())) {
-            map.put("username", "Username Already Exists");
-            resp.setError(true);
+           throw new DuplicateUsernameFoundException("Username already exists");
         }
         if (isEmailExists(req.getEmail())) {
-            map.put("email", "Email Already Exists");
-            resp.setError(true);
+            throw new DuplicateEmailFoundException("Email already exists");
 
         }
-        resp.setMessage(map);
         return resp;
     }
 
@@ -163,27 +145,17 @@ public class AuthService {
     public RegisterResponse validateRegisterConfirmation(String tokenName)
     {
         Token token = tokenRepo.findByTokenName(tokenName);
-        Map<String,Object> map = new HashMap<>();
-
         if(token!=null)
         {
             User user = token.getUser();
             user.setStatus(true);
             userRepo.save(user);
-            map.put("status","Registration Successful");
-            return UserMapper.toRegisterResponse(token.getUser(),map,false);
+            return UserMapper.toRegisterResponse(token.getUser(),"Registration Successful");
 
         }
         else
         {
-            map.put("status","Registration Unsuccessful");
-            RegisterResponse resp = new RegisterResponse();
-            resp.setUsername(null);
-            resp.setEmail(null);
-            resp.setRole(null);
-            resp.setError(true);
-            resp.setMessage(map);
-            return resp;
+          throw new RegistrationFailedException("Failed to add user");
         }
     }
 
@@ -205,25 +177,20 @@ public class AuthService {
     //Method to resend registration confirmation token
     public RegisterResponse resendConfirmationToken(String email,HttpServletRequest servletRequest)
     {
-        Map<String,Object> map = new HashMap<>();
 
         if(email.isEmpty())
         {
-            map.put("status","Null Email field");
-            return new RegisterResponse(null,null,null,map,true);
+            throw new ValidationFailedException("Email required");
         }
         else {
                User user = userRepo.findByEmail(email);
                if(user==null)
                {
-                   map.put("email","No registration found with this email id");
-                   map.put("status","Fill the registration form first");
-                   return new RegisterResponse(null,email,null,map,true);
+                   throw new RegistrationFailedException("Fill the registration form first with this email id");
                }
                else if(user.getStatus())
                {
-                   map.put("status","Account already active");
-                   return new RegisterResponse(user.getUsername(), user.getEmail(), user.getRole(),map,true);
+                   throw new RegistrationFailedException("User already registered");
                }
                else
                {
@@ -232,13 +199,12 @@ public class AuthService {
                        tokenRepo.delete(tokenRepo.findByUser(user));
                        //resending confirmation token
                        sendConfirmationToken(user, servletRequest);
-                       map.put("status", "Check mail for confirmation link");
-                       return new RegisterResponse(user.getUsername(), user.getEmail(), user.getRole(), map, false);
+                       String message = "Check mail for confirmation link";
+                       return new RegisterResponse(user.getUsername(), user.getEmail(), user.getRole(),message);
                    }
                    catch(MessagingException e)
                    {
-                       map.put("status","Failed to send confirmation link");
-                       return new RegisterResponse(user.getUsername(), user.getEmail(), user.getRole(),map,true);
+                       throw new RegistrationFailedException("Something went wrong : Failed to send confirmation link");
                    }
                }
         }
