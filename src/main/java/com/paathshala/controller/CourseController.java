@@ -27,7 +27,7 @@ public class CourseController {
     @Autowired
     private CourseService courseService;
 
-
+    @PreAuthorize("hasRole('STUDENT')")
     @GetMapping("/{courseTitle}")
     public ResponseEntity<CourseDetails> getCourse(@PathVariable String courseTitle)
     {

@@ -3,6 +3,8 @@ package com.paathshala.security;
 
 import com.paathshala.service.MyUserDetailsService;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,11 +39,14 @@ public class SecurityConfig {
     @Autowired
     private CustomOauth2FailureHandler oauth2FailureHandler;
 
+    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
+
 
    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception
     {
         http
+                .cors(Customizer.withDefaults())
                 .csrf(configurer -> configurer.disable())
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
@@ -82,11 +87,21 @@ public class SecurityConfig {
     public AuthenticationEntryPoint unauthorizedEntryPoint()
     {
         return (request,response,authException) -> {
+            String path = request.getServletPath();
+            String method = request.getMethod();
+            String authHeader = request.getHeader("Authorization");
+
+            // Log everything
+            log.error("=== UNAUTHORIZED ENTRYPOINT TRIGGERED ===");
+            log.error("Request Path: {}", path);
+            log.error("HTTP Method: {}", method);
+            log.error("Authorization Header: {}", authHeader);
+            log.error("Exception Message: {}", authException.getMessage());
             StringBuilder loginUrl = new StringBuilder();
             loginUrl.append(request.getScheme()).append("://").append(request.getServerName()).append(":").append(request.getServerPort()).append("/api/auth/login");
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("{\"error\": \"Unauthorized - Please login at \""+loginUrl.toString());
+            response.getWriter().write("{\"error\": \"Unauthorized - Please login at \""+loginUrl+"\"}");
         };
     }
 
@@ -109,8 +124,8 @@ public class SecurityConfig {
           "/swagger-ui.html",
           "/note/**",
           "/video/**",
-          "/modelQuestion/**"
-
+          "/modelQuestion/**",
+          "/error"
   };
 
 }

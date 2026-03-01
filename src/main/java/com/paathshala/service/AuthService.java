@@ -18,6 +18,8 @@ import com.paathshala.repository.TokenRepo;
 import com.paathshala.repository.UserRepo;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -59,6 +61,7 @@ public class AuthService {
     @Autowired
     private AuthenticationManager authManager;
 
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
     //Method to login user with credentials
     public LoginResponse loginUser(LoginRequest req)
@@ -75,11 +78,6 @@ public class AuthService {
         }
   catch(AuthenticationException ex)
         {
-            Optional<User> user = userRepo.findByUsernameOrEmail(req.getUsername(),req.getUsername());
-
-            if(!encoder.matches(req.getPassword(),user.get().getPassword()))
-                throw new LoginFailedException("Password didn't matched");
-
             throw new LoginFailedException("Credentials didn't matched");
 
         }
@@ -130,7 +128,9 @@ public class AuthService {
         RegisterResponse resp = new RegisterResponse();
         resp.setUsername(req.getUsername());
         resp.setEmail(req.getEmail());
-        if (isUsernameExists(req.getUsername())) {
+        log.info("Username : {} exists = {}",req.getUsername(),userRepo.existsByUsername(req.getUsername()));
+        if (userRepo.existsByUsername(req.getUsername())) {
+
            throw new DuplicateUsernameFoundException("Username already exists");
         }
         if (isEmailExists(req.getEmail())) {
@@ -212,11 +212,7 @@ public class AuthService {
     }
 
 
-    //Method to check if username exists in database
-    public boolean isUsernameExists(String username) {
-        return userRepo.findByUsername(username) != null;
 
-    }
 
     //Method to check if email exists in database
     public boolean isEmailExists(String email) {
