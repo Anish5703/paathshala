@@ -14,6 +14,7 @@ import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,13 +44,12 @@ public class PaymentService {
         this.courseRepo=courseRepo;
     }
 
+
     @Transactional
     public PaymentCheckoutResponse createCheckout(PaymentCheckoutRequest request){
         try{
-        log.info("Entered createCheckout method");
         Stripe.apiKey = stripeSecretKey;
 
-        log.info("Stripe secret key {}", stripeSecretKey);
         // 1. Validate user
         User user = userRepo.findByUsername(request.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException(

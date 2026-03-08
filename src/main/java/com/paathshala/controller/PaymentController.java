@@ -1,3 +1,5 @@
+package com.paathshala.controller;
+
 import com.paathshala.dto.payment.PaymentCheckoutRequest;
 import com.paathshala.dto.payment.PaymentCheckoutResponse;
 import com.paathshala.dto.payment.PaymentVerifyRequest;
@@ -13,9 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-@RequestMapping("/api/payment")
 @RestController
+@RequestMapping("/api/payment")
 public class PaymentController {
 
     @Autowired
@@ -26,7 +27,6 @@ public class PaymentController {
     @PostMapping("/create-checkout")
     public ResponseEntity<PaymentCheckoutResponse> createCheckout(
             @RequestBody PaymentCheckoutRequest request) {
-        log.info("/api/payment/create-checkout endpoint hit");
         PaymentCheckoutResponse response = paymentService.createCheckout(request);
         HttpHeaders header = new HttpHeaders();
         header.set("Content-Type","application/json");
