@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 
 public class VideoDetails extends ContentDetails {
 
+    /*
+
     private Integer contentLength; //in seconds
 
     public VideoDetails(int id, String title,String courseTitle, String description, String contentUrl, String contentType, Long contentSize, LocalDateTime createdAt, Integer contentLength) {
@@ -22,4 +24,7 @@ public class VideoDetails extends ContentDetails {
     {
         this.contentLength=contentLength;
     }
+
+
+     */
 }

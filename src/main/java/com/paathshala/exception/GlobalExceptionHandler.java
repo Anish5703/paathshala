@@ -10,7 +10,7 @@ import com.paathshala.exception.course.CourseNotFoundException;
 import com.paathshala.exception.course.CourseSaveFailedException;
 import com.paathshala.exception.enrollment.EnrollmentFailedException;
 import com.paathshala.exception.enrollment.PaymentFailedException;
-import com.paathshala.exception.note.*;
+import com.paathshala.exception.content.*;
 import com.paathshala.model.ErrorType;
 import com.stripe.exception.StripeException;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -233,41 +233,41 @@ public class GlobalExceptionHandler {
 
 
 
-    @ExceptionHandler(NoteNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNoteNotFound(NoteNotFoundException ex)
+    @ExceptionHandler(ContentNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoteNotFound(ContentNotFoundException ex)
     {
         log.error(ex.getMessage(),ex.getLocalizedMessage());
-        ErrorResponse resp = new ErrorResponse(ErrorType.NOTE_NOT_FOUND,ex.getMessage());
+        ErrorResponse resp = new ErrorResponse(ErrorType.CONTENT_NOT_FOUND,ex.getMessage());
         return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
     }
-    @ExceptionHandler(NoteDuplicateFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNoteDuplicateFound(NoteDuplicateFoundException ex)
+    @ExceptionHandler(ContentDuplicateFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoteDuplicateFound(ContentDuplicateFoundException ex)
     {
         log.error(ex.getMessage(),ex.getLocalizedMessage());
-        ErrorResponse resp = new ErrorResponse(ErrorType.DUPLICATE_NOTE,ex.getMessage());
+        ErrorResponse resp = new ErrorResponse(ErrorType.DUPLICATE_CONTENT,ex.getMessage());
         return new ResponseEntity<>(resp,HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(NoteUpdateFailedException.class)
-    public ResponseEntity<ErrorResponse> handleNoteUpdateFailed(NoteUpdateFailedException ex)
+    @ExceptionHandler(ContentUpdateFailedException.class)
+    public ResponseEntity<ErrorResponse> handleNoteUpdateFailed(ContentUpdateFailedException ex)
     {
         log.error(ex.getMessage(),ex.getLocalizedMessage());
-        ErrorResponse resp = new ErrorResponse(ErrorType.NOTE_NOT_UPDATED,ex.getMessage());
+        ErrorResponse resp = new ErrorResponse(ErrorType.CONTENT_NOT_UPDATED,ex.getMessage());
         return new ResponseEntity<>(resp,HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    @ExceptionHandler(NoteSaveFailedException.class)
-    public ResponseEntity<ErrorResponse> handleNoteSaveFailed(NoteSaveFailedException ex)
+    @ExceptionHandler(ContentSaveFailedException.class)
+    public ResponseEntity<ErrorResponse> handleNoteSaveFailed(ContentSaveFailedException ex)
     {
         log.error(ex.getMessage(),ex.getLocalizedMessage());
-        ErrorResponse resp = new ErrorResponse(ErrorType.NOTE_NOT_SAVED,ex.getMessage());
+        ErrorResponse resp = new ErrorResponse(ErrorType.CONTENT_NOT_SAVED,ex.getMessage());
         return new ResponseEntity<>(resp,HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(NoteDeleteFailedException.class)
-    public ResponseEntity<ErrorResponse> handleNoteDeleteFailed(NoteDeleteFailedException ex)
+    @ExceptionHandler(ContentDeleteFailedException.class)
+    public ResponseEntity<ErrorResponse> handleNoteDeleteFailed(ContentDeleteFailedException ex)
     {
         log.error(ex.getMessage(),ex.getLocalizedMessage());
-        ErrorResponse resp = new ErrorResponse(ErrorType.NOTE_NOT_DELETED,ex.getMessage());
+        ErrorResponse resp = new ErrorResponse(ErrorType.CONTENT_NOT_DELETED,ex.getMessage());
         return new ResponseEntity<>(resp,HttpStatus.INTERNAL_SERVER_ERROR);
 
     }

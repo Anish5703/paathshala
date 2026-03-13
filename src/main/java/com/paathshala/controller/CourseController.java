@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -63,12 +64,17 @@ public class CourseController {
       return ResponseEntity.status(HttpStatus.CREATED).headers(header).body(response);
     }
 
-    @PutMapping("/{courseTitle}/update")
+    @PutMapping(value = "/{courseTitle}/update" ,
+    consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CourseResponse> modifyCourse(@Valid @RequestBody CourseRequest request,@PathVariable String courseTitle)
+    public ResponseEntity<CourseResponse> modifyCourse(@Valid @RequestPart("CourseRequest")String requestJson,
+                                                       @PathVariable String courseTitle,
+                                                       @RequestPart("image") MultipartFile image) throws JsonProcessingException
     {
+        ObjectMapper mapper = new ObjectMapper();
+        CourseRequest request = mapper.readValue(requestJson,CourseRequest.class);
         String decodedCourseTitle = URLDecoder.decode(courseTitle, StandardCharsets.UTF_8);
-        CourseResponse response = courseService.updateCourse(request,decodedCourseTitle);
+        CourseResponse response = courseService.updateCourse(request,decodedCourseTitle,image);
         HttpHeaders header = new HttpHeaders();
         header.set("Content-Type","application/json");
         return ResponseEntity.status(HttpStatus.OK).headers(header).body(response);

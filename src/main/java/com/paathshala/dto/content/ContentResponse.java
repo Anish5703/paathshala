@@ -20,9 +20,9 @@ public class ContentResponse {
     private Long contentSize;
     private LocalDateTime createdAt;
 
-private ApiMessage message;
+private String message;
 
-    public ContentResponse(String title,ApiMessage message)
+    public ContentResponse(String title,String message)
     {
         this.title=title;
         this.message=message;

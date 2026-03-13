@@ -31,7 +31,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/video/**")
                 .addResourceLocations(Paths.get(videoDir).toUri().toString());
 
-        registry.addResourceHandler("/modelQuestion/**")
+        registry.addResourceHandler("/model-question/**")
                 .addResourceLocations(Paths.get(modelQuestionDir).toUri().toString());
 
         registry.addResourceHandler("/course/**")

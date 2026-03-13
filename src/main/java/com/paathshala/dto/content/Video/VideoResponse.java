@@ -1,11 +1,13 @@
 package com.paathshala.dto.content.Video;
 
 import com.paathshala.dto.content.ContentDetails;
+import com.paathshala.dto.content.ContentResponse;
 
 import java.time.LocalDateTime;
 
-public class VideoResponse extends ContentDetails {
+public class VideoResponse extends ContentResponse {
 
+    /*
     private Integer contentLength;
 
     public VideoResponse(int id, String title, String courseTitle, String description, String contentUrl, String contentType, Long contentSize, LocalDateTime createdAt, Integer contentLength) {
@@ -20,4 +22,6 @@ public class VideoResponse extends ContentDetails {
     public void setContentLength(Integer contentLength) {
         this.contentLength = contentLength;
     }
+    */
+
 }

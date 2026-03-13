@@ -64,11 +64,10 @@ public class JwtFilter extends OncePerRequestFilter {
            if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                username = jwtService.extractUsername(token);
 
-               log.info("Extracted username from token : {}",username);
+               log.info("Extracted username from token / : {}",username);
 
                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-               log.info("Extracted user details : {} {}",userDetails.getAuthorities(),userDetails.getUsername());
-
+               log.info("Extracted UserDetails : {} {}",userDetails.getAuthorities(),userDetails.getUsername());
          boolean isTokenValid = jwtService.validateToken(token,userDetails);
          log.info("isTokenValid : {}",isTokenValid);
                if (isTokenValid) {

@@ -124,7 +124,10 @@ public class SecurityConfig {
           "/swagger-ui.html",
           "/note/**",
           "/video/**",
+          "/course/**",
           "/modelQuestion/**",
+          "/api/course/all",
+          "/api/category/all",
           "/error"
   };
 
