@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class OauthService {
@@ -124,16 +125,16 @@ public class OauthService {
     public LoginResponse validateToken(String token)
     {
         String username =(String) jwtService.extractUsername(token);
-        User user = userRepo.findByUsername(username);
-        if(user != null)
-            return UserMapper.toLoginResponse(user,token,"Login Successful");
+        Optional<User> user = userRepo.findByUsername(username);
+        if(user.isPresent())
+            return UserMapper.toLoginResponse(user.get(),token,"Login Successful");
         else
             throw new LoginFailedException("Session expired : Login again");
     }
 
     //Method to check if username exists in database
     public boolean isUsernameExists(String username) {
-        return userRepo.findByUsername(username) != null;
+        return userRepo.existsByUsername(username);
 
     }
 

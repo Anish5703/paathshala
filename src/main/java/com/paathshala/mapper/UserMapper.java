@@ -1,7 +1,7 @@
 package com.paathshala.mapper;
 
 
-import com.paathshala.dto.login.LoginRequest;
+import com.paathshala.dto.StudentDetails;
 import com.paathshala.dto.login.LoginResponse;
 import com.paathshala.dto.register.RegisterRequest;
 import com.paathshala.dto.register.RegisterResponse;
@@ -11,7 +11,8 @@ import com.paathshala.model.Role;
 import com.paathshala.entity.User;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class UserMapper {
@@ -65,4 +66,21 @@ public class UserMapper {
                  message
          );
     }
+
+    public static StudentDetails toStudentDetails(Student student)
+    {
+        return new StudentDetails(student.getId(), student.getUsername(), student.getEmail(), student.getIsActive());
+    }
+
+    public static List<StudentDetails> toStudentDetailsList(List<Student> students)
+    {
+        if(students.isEmpty()) throw new IllegalArgumentException();
+        List<StudentDetails> studentDetailsList = new ArrayList<>();
+        for (Student student : students)
+        {
+            studentDetailsList.add(toStudentDetails(student));
+        }
+        return studentDetailsList;
+    }
+
 }

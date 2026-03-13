@@ -80,6 +80,12 @@ public class CourseService {
         if(request==null)
             throw new IllegalArgumentException("Course cannot be null");
 
+        if(image==null)
+        logger.warn("File is empty");
+        else
+            logger.info("File is not empty");
+
+
        if(courseRepo.existsByTitle(request.getTitle()))
            throw new CourseDuplicateFoundException(String.format("Failed to save course : Course '%s' already exists",request.getTitle()));
 
@@ -106,7 +112,7 @@ public class CourseService {
 
     }
     @Transactional
-    public CourseResponse updateCourse(CourseRequest request, String courseTitle)
+    public CourseResponse updateCourse(CourseRequest request, String courseTitle,MultipartFile image)
     {
         if(request==null)
             throw new IllegalArgumentException("Course cannot be null");
@@ -117,13 +123,23 @@ public class CourseService {
         Course modifiedCourse = prepareCourseUpdate(request,course);
 
        try {
+           if(image!=null)
+           {
+             String imageUrl = storeImage(image,courseDirectory,course.getImageUrl());
+             modifiedCourse.setImageUrl(imageUrl);
+           }
+           else
+           {
+               modifiedCourse.setImageUrl(course.getImageUrl());
+           }
+
            Course updatedCourse = courseRepo.save(modifiedCourse);
            ApiMessage message = new ApiMessage();
            message.setStatus("Course updated");
            message.setDetails(String.format("Course '%s' updated successfully",courseTitle));
            return courseMapper.toCourseResponseSuccess(updatedCourse, message);
        }
-       catch(DataAccessException ex)
+       catch(DataAccessException | IOException ex)
        {
            logger.error(ErrorType.COURSE_NOT_UPDATED.toString(),ex);
            throw new CourseUpdateFailedException(String.format("Failed to update course '%s' : Database error",courseTitle));

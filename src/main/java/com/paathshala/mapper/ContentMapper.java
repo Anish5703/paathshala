@@ -1,11 +1,20 @@
 package com.paathshala.mapper;
 
 import com.paathshala.dto.ApiMessage;
+import com.paathshala.dto.content.ModelQuestion.ModelQuestionDetails;
+import com.paathshala.dto.content.ModelQuestion.ModelQuestionRequest;
+import com.paathshala.dto.content.ModelQuestion.ModelQuestionResponse;
 import com.paathshala.dto.content.Note.NoteDetails;
 import com.paathshala.dto.content.Note.NoteRequest;
 import com.paathshala.dto.content.Note.NoteResponse;
+import com.paathshala.dto.content.Video.VideoDetails;
+import com.paathshala.dto.content.Video.VideoRequest;
+import com.paathshala.dto.content.Video.VideoResponse;
+import com.paathshala.entity.ModelQuestion;
 import com.paathshala.entity.Note;
+import com.paathshala.entity.Video;
 import org.springframework.stereotype.Component;
+import org.springframework.ui.Model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,14 +33,8 @@ public class ContentMapper {
         return note;
     }
 
-    public NoteResponse toNoteResponseError(String noteTitle, ApiMessage message)
-    {
-        NoteResponse noteResponse = new NoteResponse();
-        noteResponse.setTitle(noteTitle);
-        noteResponse.setMessage(message);
-        return noteResponse;
-    }
-    public NoteResponse toNoteResponseSuccess(Note note,ApiMessage message)
+
+    public NoteResponse toNoteResponseSuccess(Note note,String message)
     {
         NoteResponse response = new NoteResponse();
         response.setId(note.getId());
@@ -69,4 +72,96 @@ public class ContentMapper {
         }
         return noteDetailsList;
     }
+
+    public Video toVideoEntity(VideoRequest request)
+    {
+        Video video = new Video();
+        video.setTitle(request.getTitle());
+        video.setDescription(request.getDescription());
+        return video;
+    }
+    public VideoResponse toVideoResponseSuccess(Video video, String message)
+    {
+        VideoResponse response = new VideoResponse();
+        response.setId(video.getId());
+        response.setTitle(video.getTitle());
+        response.setDescription(video.getDescription());
+        response.setCourseTitle(video.getCourse().getTitle());
+        response.setContentUrl(video.getContentUrl());
+        response.setContentType(video.getContentType());
+        response.setContentSize(video.getContentSize());
+        response.setMessage(message);
+        return response;
+
+    }
+    public VideoDetails toVideoDetails(Video video)
+    {
+        VideoDetails videoDetails = new VideoDetails();
+        videoDetails.setId(video.getId());
+        videoDetails.setTitle(video.getTitle());
+        videoDetails.setCourseTitle(video.getCourse().getTitle());
+        videoDetails.setDescription(video.getDescription());
+        videoDetails.setCreatedAt(video.getCreatedAt());
+        videoDetails.setContentUrl(video.getContentUrl());
+        videoDetails.setContentType(video.getContentType());
+        videoDetails.setContentSize(video.getContentSize());
+        return videoDetails;
+    }
+    public List<VideoDetails> toVideoDetailsList(List<Video> videos)
+    {
+        if(videos.isEmpty()) return null;
+        List<VideoDetails> videoDetailsList = new ArrayList<>();
+        for(Video video : videos )
+        {
+            videoDetailsList.add(toVideoDetails(video));
+        }
+        return videoDetailsList;
+    }
+
+    public ModelQuestion toModelQuestionEntity(ModelQuestionRequest request)
+    {
+        ModelQuestion modelQuestion = new ModelQuestion();
+        modelQuestion.setTitle(request.getTitle());
+        modelQuestion.setDescription(request.getDescription());
+        return modelQuestion;
+    }
+    public ModelQuestionResponse toModelQuestionResponseSuccess(ModelQuestion modelQuestion, String message)
+    {
+        ModelQuestionResponse response = new ModelQuestionResponse();
+        response.setId(modelQuestion.getId());
+        response.setTitle(modelQuestion.getTitle());
+        response.setDescription(modelQuestion.getDescription());
+        response.setCourseTitle(modelQuestion.getCourse().getTitle());
+        response.setContentUrl(modelQuestion.getContentUrl());
+        response.setContentType(modelQuestion.getContentType());
+        response.setContentSize(modelQuestion.getContentSize());
+        response.setMessage(message);
+        return response;
+
+    }
+    public ModelQuestionDetails toModelQuestionDetails(ModelQuestion modelQuestion)
+    {
+        ModelQuestionDetails modelQuestionDetails = new ModelQuestionDetails();
+        modelQuestionDetails.setId(modelQuestion.getId());
+        modelQuestionDetails.setTitle(modelQuestion.getTitle());
+        modelQuestionDetails.setCourseTitle(modelQuestion.getCourse().getTitle());
+        modelQuestionDetails.setDescription(modelQuestion.getDescription());
+        modelQuestionDetails.setCreatedAt(modelQuestion.getCreatedAt());
+        modelQuestionDetails.setContentUrl(modelQuestion.getContentUrl());
+        modelQuestionDetails.setContentType(modelQuestion.getContentType());
+        modelQuestionDetails.setContentSize(modelQuestion.getContentSize());
+        return modelQuestionDetails;
+    }
+    public List<ModelQuestionDetails> toModelQuestionDetailsList(List<ModelQuestion> modelQuestions)
+    {
+        if(modelQuestions.isEmpty()) return null;
+        List<ModelQuestionDetails> modelQUestionDetailsList = new ArrayList<>();
+        for(ModelQuestion modelQuestion : modelQuestions )
+        {
+            modelQUestionDetailsList.add(toModelQuestionDetails(modelQuestion));
+        }
+        return modelQUestionDetailsList;
+    }
+
+
 }

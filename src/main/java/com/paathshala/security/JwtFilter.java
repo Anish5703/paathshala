@@ -9,6 +9,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +29,8 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private MyUserDetailsService userDetailsService;
 
+    private static final Logger log = LoggerFactory.getLogger(JwtFilter.class);
+
     @Override
     protected void doFilterInternal(HttpServletRequest req,
                                     HttpServletResponse resp,
@@ -36,13 +40,17 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = null;
         String username = null;
 
-        // 1️⃣ Try Authorization header (for API / Postman)
+        log.info("JWT FILTER HIT: {}", req.getServletPath());
+
+        //Authorization header (for API / Postman)
         String authHeader = req.getHeader("Authorization");
+        log.info("Authorization Header: {}",authHeader);
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
         }
-
-        // 2️⃣ If no header, try COOKIE (OAuth flow)
+        log.info("Jwt Token : {}",token);
+        //no header, try COOKIE (OAuth flow)
         if (token == null && req.getCookies() != null) {
             for (var cookie : req.getCookies()) {
                 if ("jwt".equals(cookie.getName())) {
@@ -51,26 +59,41 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         }
 
-        // 3️⃣ Validate & authenticate
-        if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            username = jwtService.extractUsername(token);
+        //Validate & authenticate
+       try {
+           if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+               username = jwtService.extractUsername(token);
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+               log.info("Extracted username from token / : {}",username);
 
-            if (jwtService.validateToken(token, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities()
-                        );
+               UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+               log.info("Extracted UserDetails : {} {}",userDetails.getAuthorities(),userDetails.getUsername());
+         boolean isTokenValid = jwtService.validateToken(token,userDetails);
+         log.info("isTokenValid : {}",isTokenValid);
+               if (isTokenValid) {
+                   UsernamePasswordAuthenticationToken authToken =
+                           new UsernamePasswordAuthenticationToken(
+                                   userDetails,
+                                   null,
+                                   userDetails.getAuthorities()
+                           );
 
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
-        }
 
-        filterChain.doFilter(req, resp);
+                   authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
+                   SecurityContextHolder.getContext().setAuthentication(authToken);
+                   log.info("GetAuthentication : {}",SecurityContextHolder.getContext().getAuthentication());
+               }
+           }
+
+           filterChain.doFilter(req, resp);
+           log.info("Jwt filtration completed");
+       }
+       catch(ExpiredJwtException e) {
+           throw new ExpiredJwtException(null,null,"Jwt token is expired");
+       }
+       catch(SignatureException e){
+           throw new SignatureException("Jwt token invalid");
+       }
     }
 
     @Override
