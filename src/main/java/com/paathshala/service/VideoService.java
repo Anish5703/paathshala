@@ -48,6 +48,8 @@ public class VideoService {
 
     @Transactional
     public VideoResponse addVideo(VideoRequest videoRequest, String courseTitle, MultipartFile file)  {
+
+        logger.info("Video Details : Video exists {}  : Video Size {}",!file.isEmpty(),file.getSize());
        /*
          Retrieve course object from database using title
          */

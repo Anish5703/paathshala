@@ -38,7 +38,7 @@ public class ModelQuestionController {
             consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ModelQuestionResponse> createModelQuestion(@Valid @RequestPart(value = "ModelQuestionRequest")String requestJson, @PathVariable String courseTitle,
-                                                                     MultipartFile modelQuestion) throws JsonProcessingException
+                                                                     @RequestPart(value="file",required = true) MultipartFile modelQuestion) throws JsonProcessingException
     {
         ModelQuestionRequest modelQuestionRequest = mapper.readValue(requestJson, ModelQuestionRequest.class);
         String decodedCourseTitle = URLDecoder.decode(courseTitle, StandardCharsets.UTF_8);
@@ -56,13 +56,13 @@ public class ModelQuestionController {
     public ResponseEntity<ModelQuestionResponse> modifyModelQuestion(@PathVariable(name="courseTitle") String courseTitle,
                                                      @PathVariable(name="contentTitle") String contentTitle,
                                                      @Valid @RequestPart("VideoRequest") String requestJson,
-                                                     @RequestPart(value = "file",required = false) MultipartFile modelQUestion) throws JsonProcessingException
+                                                     @RequestPart(value = "file",required = false) MultipartFile modelQuestion) throws JsonProcessingException
     {
         ModelQuestionRequest modelQuestionRequest = mapper.readValue(requestJson, ModelQuestionRequest.class);
         String decodedCourseTitle = URLDecoder.decode(courseTitle, StandardCharsets.UTF_8);
         String decodedModelQuestionTitle = URLDecoder.decode(contentTitle,StandardCharsets.UTF_8);
 
-        ModelQuestionResponse response = modelQuestionService.updateModelQuestion(modelQuestionRequest,decodedModelQuestionTitle,decodedCourseTitle,modelQUestion);
+        ModelQuestionResponse response = modelQuestionService.updateModelQuestion(modelQuestionRequest,decodedModelQuestionTitle,decodedCourseTitle,modelQuestion);
         HttpHeaders header = new HttpHeaders();
         header.set("Content-Type","application/json");
         return ResponseEntity.status(HttpStatus.CREATED).headers(header).body(response);

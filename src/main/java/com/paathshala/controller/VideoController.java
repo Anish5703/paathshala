@@ -35,7 +35,7 @@ public class VideoController {
     consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<VideoResponse> createVideo(@Valid @RequestPart(value = "VideoRequest")String requestJson, @PathVariable String courseTitle,
-                                                     MultipartFile video) throws JsonProcessingException
+                                                     @RequestPart(value = "file",required = false)MultipartFile video) throws JsonProcessingException
     {
         VideoRequest videoRequest = mapper.readValue(requestJson, VideoRequest.class);
         String decodedCourseTitle = URLDecoder.decode(courseTitle, StandardCharsets.UTF_8);
