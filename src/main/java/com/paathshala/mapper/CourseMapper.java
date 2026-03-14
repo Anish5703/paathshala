@@ -42,6 +42,7 @@ public class CourseMapper {
     public CourseDetails toCourseDetails(Course course)
     {
         return new CourseDetails(
+                course.getId(),
                 course.getTitle(),
                 course.getCategory().getTitle(),
                 course.getPrice(),
