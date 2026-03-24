@@ -59,7 +59,7 @@ public class EnrollmentService {
         }
 
         // 4. Check duplicate enrollment
-        if (enrollmentRepo.existsByUserUsernameAndCourseTitle(
+        if (enrollmentRepo.existsByUserAndCourseTitle(
                 request.getUsername(), request.getCourseTitle())) {
             throw new EnrollmentFailedException(
                     "Already enrolled in this course.");
@@ -90,7 +90,7 @@ public class EnrollmentService {
                 .orElseThrow(() -> new CourseNotFoundException("Course not found: " + courseTitle));
 
         // Prevent duplicate enrollment
-        if (enrollmentRepo.existsByUserUsernameAndCourseTitle(username, courseTitle)) {
+        if (enrollmentRepo.existsByUserAndCourseTitle(username, courseTitle)) {
             throw new EnrollmentFailedException("Already enrolled in this course.");
         }
 

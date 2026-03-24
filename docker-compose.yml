@@ -51,6 +51,7 @@ services:
 
 
     restart: unless-stopped
+    stop_grace_period: 30s
     # Add volumes for uploads
     volumes:
       - ./uploads/notes:/uploads/notes

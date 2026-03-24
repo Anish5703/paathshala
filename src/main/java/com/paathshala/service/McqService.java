@@ -9,6 +9,7 @@ import com.paathshala.repository.CourseRepo;
 import com.paathshala.repository.McqAttemptHistoryRepo;
 import com.paathshala.repository.McqQuestionRepo;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,7 @@ public class McqService {
         this.courseRepo = courseRepo;
         this.mcqQuestionRepo = mcqQuestionRepo;
         this.mcqAttemptHistoryRepo = mcqAttemptHistoryRepo;
+        this.logger = LoggerFactory.getLogger(McqService.class);
     }
 
     public List<McqQuestionResponse> getQuestions(String courseTitle, String difficulty, int limit) {
@@ -144,6 +146,7 @@ public class McqService {
             question.setQuestion(request.getQuestion());
             question.setOptionA(request.getOptionA());
             question.setOptionB(request.getOptionB());
+            question.setOptionC(request.getOptionC());
             question.setOptionD(request.getOptionD());
             question.setCorrectAnswer(request.getCorrectAnswer());
             question.setDifficulty(request.getDifficulty());

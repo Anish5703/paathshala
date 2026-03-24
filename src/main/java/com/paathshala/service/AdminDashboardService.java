@@ -34,7 +34,7 @@ public class AdminDashboardService {
     }
     public long getTotalNumberOfEnrolledStudent()
     {
-        return enrollmentRepo.totalActiveUsers();
+        return enrollmentRepo.countActiveStudents();
     }
 
     public List<StudentDetails> getAllStudents()
