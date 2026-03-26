@@ -128,7 +128,8 @@ public class SecurityConfig {
           "/modelQuestion/**",
           "/api/course/all",
           "/api/category/all",
-          "/error"
+          "/error",
+          "/api/ai/**"
   };
 
 }

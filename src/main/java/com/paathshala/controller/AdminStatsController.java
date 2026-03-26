@@ -19,19 +19,12 @@ public class AdminStatsController {
         this.analyticsService = analyticsService;
     }
 
-    /**
-     * GET /api/admin/stats
-     * Returns overall platform statistics
-     */
+
     @GetMapping("/stats")
     public ResponseEntity<AdminStatsResponse> getStats() {
         return ResponseEntity.ok(analyticsService.getAdminStats());
     }
 
-    /**
-     * GET /api/admin/enrollments/recent?limit=10
-     * Returns recent enrollment activity
-     */
     @GetMapping("/enrollments/recent")
     public ResponseEntity<List<RecentEnrollmentResponse>> getRecentEnrollments(
             @RequestParam(defaultValue = "10") int limit
@@ -39,19 +32,13 @@ public class AdminStatsController {
         return ResponseEntity.ok(analyticsService.getRecentEnrollments(limit));
     }
 
-    /**
-     * GET /api/admin/courses/enrollment-count
-     * Returns per-course enrollment counts
-     */
+
     @GetMapping("/courses/enrollment-count")
     public ResponseEntity<List<CourseEnrollmentCount>> getCourseEnrollmentCounts() {
         return ResponseEntity.ok(analyticsService.getCourseEnrollmentCounts());
     }
 
-    /**
-     * GET /api/admin/revenue/summary
-     * Returns revenue breakdown with monthly data
-     */
+
     @GetMapping("/revenue/summary")
     public ResponseEntity<RevenueSummaryResponse> getRevenueSummary() {
         return ResponseEntity.ok(analyticsService.getRevenueSummary());

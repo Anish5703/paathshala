@@ -41,14 +41,10 @@ services:
 
     env_file:
       - .env
-
-
-    #    environment:
-    #      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/paathshala-db
-    #      SPRING_DATASOURCE_USERNAME: myuser
-    #      SPRING_DATASOURCE_PASSWORD: mypassword
-
-
+    environment:
+      - SPRING_AI_OLLAMA_BASE_URL=http://host.docker.internal:11434
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
     restart: unless-stopped
     stop_grace_period: 30s
