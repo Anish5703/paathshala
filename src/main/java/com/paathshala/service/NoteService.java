@@ -182,9 +182,15 @@ public class NoteService {
             if (!isHashEqual) {
                 modifiedNote = contentService.saveContentFileAndProperties(modifiedNote, file, noteDirectory);
             }
+            else
+            {
+                modifiedNote = note;
+                modifiedNote.setDescription(noteRequest.getDescription());
+            }
         }
         else{
-            modifiedNote.setContentUrl(note.getContentUrl());
+            modifiedNote = note;
+            modifiedNote.setDescription(noteRequest.getDescription());
         }
         try {
             Note updatedNote = noteRepo.save(modifiedNote);

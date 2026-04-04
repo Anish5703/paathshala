@@ -69,7 +69,7 @@ public class CourseController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CourseResponse> modifyCourse(@Valid @RequestPart("CourseRequest")String requestJson,
                                                        @PathVariable String courseTitle,
-                                                       @RequestPart("image") MultipartFile image) throws JsonProcessingException
+                                                       @RequestPart(name="image",required = false) MultipartFile image) throws JsonProcessingException
     {
         ObjectMapper mapper = new ObjectMapper();
         CourseRequest request = mapper.readValue(requestJson,CourseRequest.class);

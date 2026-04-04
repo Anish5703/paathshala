@@ -187,9 +187,14 @@ public class VideoService {
             if (!isHashEqual) {
                 modifiedVideo = contentService.saveContentFileAndProperties(modifiedVideo, file, videoDirectory);
             }
+            else {
+                modifiedVideo = video;
+                modifiedVideo.setDescription(videoRequest.getDescription());
+            }
         }
         else{
-            modifiedVideo.setContentUrl(video.getContentUrl());
+            modifiedVideo = video;
+            modifiedVideo.setDescription(videoRequest.getDescription());
         }
         try {
             Video updatedVideo = videoRepo.save(modifiedVideo);

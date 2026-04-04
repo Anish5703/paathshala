@@ -185,10 +185,14 @@ public class ModelQuestionService {
             if (!isHashEqual) {
                 modifiedModelQuestion = contentService.saveContentFileAndProperties(modifiedModelQuestion, file, modelQuestionDirectory);
             }
+            else {
+                modifiedModelQuestion = modelQuestion;
+                modifiedModelQuestion.setDescription(modelQuestionRequest.getDescription());
+            }
         }
         else{
-            modifiedModelQuestion.setContentUrl(modelQuestion.getContentUrl());
-        }
+            modifiedModelQuestion = modelQuestion;
+            modifiedModelQuestion.setDescription(modelQuestionRequest.getDescription());        }
         try {
             ModelQuestion updatedModelQuestion = modelQuestionRepo.save(modifiedModelQuestion);
             String message = ("Model Question updated successfully");
